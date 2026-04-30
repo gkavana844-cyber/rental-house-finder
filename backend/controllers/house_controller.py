@@ -5,11 +5,12 @@ import cloudinary
 import cloudinary.uploader
 import os
 
-# 🔥 CLOUDINARY CONFIG
+# 🔥 CLOUDINARY CONFIG (UPDATED ✅)
 cloudinary.config(
-    cloud_name=os.getenv("CLOUD_NAME"),
-    api_key=os.getenv("CLOUD_API_KEY"),
-    api_secret=os.getenv("CLOUD_API_SECRET")
+    cloud_name=os.environ.get("CLOUD_NAME"),
+    api_key=os.environ.get("CLOUD_API_KEY"),
+    api_secret=os.environ.get("CLOUD_API_SECRET"),
+    secure=True
 )
 
 
@@ -103,19 +104,20 @@ def add_house():
             amenities = [a.strip() for a in amenities.split(",") if a.strip()]
 
         # =========================
-        # 🖼 IMAGE UPLOAD (UPDATED ✅)
+        # 🖼 IMAGE UPLOAD (UPDATED DEBUG ✅)
         # =========================
         image_urls = []
 
         try:
             for file in files:
+                print("🔥 FILE:", file)  # 🔥 ADDED DEBUG
+
                 if file and file.filename != "":
                     result = cloudinary.uploader.upload(file)
 
-                    print("🔥 Cloudinary Upload Response:", result)  # DEBUG
-                    print("🔥 Image URL:", result.get("secure_url"))
+                    print("🔥 CLOUDINARY RESULT:", result)  # 🔥 ADDED DEBUG
 
-                    image_urls.append(result.get("secure_url"))
+                    image_urls.append(result["secure_url"])  # ✅ Using result["secure_url"]
 
         except Exception as e:
             print("❌ Cloudinary Error:", e)
