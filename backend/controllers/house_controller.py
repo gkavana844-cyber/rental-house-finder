@@ -1,10 +1,23 @@
-from flask import current_app
+from flask import current_app, request
 from datetime import datetime
 import re
+import cloudinary
+import cloudinary.uploader
+import os
+
+# 🔥 CLOUDINARY CONFIG
+cloudinary.config(
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("CLOUD_API_KEY"),
+    api_secret=os.getenv("CLOUD_API_SECRET")
+)
 
 
-def add_house(data):
+def add_house():
     db = current_app.db
+
+    data = request.form  # 🔥 form-data
+    files = request.files.getlist("images")  # 🔥 images
 
     print("🔥 Incoming Data:", data)
 
@@ -15,10 +28,7 @@ def add_house(data):
     location = data.get("location")
 
     if not title or not location:
-        return {
-            "success": False,
-            "error": "Title and Location are required"
-        }
+        return {"success": False, "error": "Title and Location are required"}
 
     # =========================
     # ✅ TYPE
@@ -57,7 +67,7 @@ def add_house(data):
         price = None
 
     # =========================
-    # 📞 PHONE + WHATSAPP (NEW)
+    # 📞 PHONE + WHATSAPP
     # =========================
     phone = data.get("phone")
     whatsapp = data.get("whatsapp")
@@ -76,7 +86,6 @@ def add_house(data):
     phone = clean_number(phone)
     whatsapp = clean_number(whatsapp)
 
-    # 🔴 Validate phone
     if not phone or len(phone) != 10:
         return {"success": False, "error": "Invalid phone number"}
 
@@ -91,14 +100,17 @@ def add_house(data):
         amenities = [a.strip() for a in amenities.split(",") if a.strip()]
 
     # =========================
-    # 🖼 IMAGES
+    # 🖼 IMAGE UPLOAD (CLOUDINARY 🔥)
     # =========================
-    images = data.get("images", [])
-    if not images and data.get("image"):
-        images = [data.get("image")]
+    image_urls = []
 
-    if not isinstance(images, list):
-        images = []
+    try:
+        for file in files:
+            result = cloudinary.uploader.upload(file)
+            image_urls.append(result["secure_url"])
+    except Exception as e:
+        print("❌ Image Upload Error:", e)
+        return {"success": False, "error": "Image upload failed"}
 
     # =========================
     # 📍 MAP LOCATION
@@ -129,13 +141,12 @@ def add_house(data):
         "price": price,
         "lease_duration": lease_duration,
 
-        "images": images,
+        "images": image_urls,  # 🔥 FIXED (cloud URLs)
         "amenities": amenities,
 
         "latitude": latitude,
         "longitude": longitude,
 
-        # 🔥 NEW FIELDS
         "phone": phone,
         "whatsapp": whatsapp,
 
@@ -156,7 +167,4 @@ def add_house(data):
 
     except Exception as e:
         print("❌ DB ERROR:", e)
-        return {
-            "success": False,
-            "error": "Database error"
-        }
+        return {"success": False, "error": "Database error"}

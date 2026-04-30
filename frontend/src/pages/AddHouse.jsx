@@ -80,7 +80,7 @@ function ChangeMapView({ coords }) {
 }
 
 function AddHouse() {
-  const navigate = useNavigate(); // ✅ FIXED: moved to top of component
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     details: "",
@@ -195,7 +195,7 @@ function AddHouse() {
     return digits.length === 10;
   };
 
-  /* 🚀 SUBMIT */
+  /* 🚀 UPDATED SUBMIT — uses FormData + real image file uploads */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -210,48 +210,70 @@ function AddHouse() {
     }
 
     try {
-      const payload = {
-        title: form.details,
-        location: form.location,
-        type: form.type,
-        price:
-          form.type === "rent"
-            ? form.rent_price
-            : form.lease_amount,
-        lease_duration:
-          form.type === "lease"
-            ? form.lease_duration
-            : null,
-        amenities: form.amenities,
-        images: previews,
-        latitude: coords.lat,
-        longitude: coords.lng,
+      const formData = new FormData();
 
-        // 🔥 FIXED CLEAN NUMBERS
-        phone: form.phone.replace(/\D/g, "").slice(-10),
-        whatsapp: form.whatsapp
-          ? form.whatsapp.replace(/\D/g, "").slice(-10)
-          : "",
-      };
+      formData.append("title", form.details);
+      formData.append("location", form.location);
+      formData.append("type", form.type);
+      formData.append(
+        "price",
+        form.type === "rent" ? form.rent_price : form.lease_amount
+      );
+      formData.append(
+        "lease_duration",
+        form.type === "lease" ? form.lease_duration : ""
+      );
+      formData.append("amenities", form.amenities);
+      formData.append("latitude", coords.lat);
+      formData.append("longitude", coords.lng);
 
-      await addHouse(payload);
+      // 🔥 Clean phone numbers — strip formatting, keep last 10 digits
+      formData.append(
+        "phone",
+        form.phone.replace(/\D/g, "").slice(-10)
+      );
+      formData.append(
+        "whatsapp",
+        form.whatsapp ? form.whatsapp.replace(/\D/g, "").slice(-10) : ""
+      );
 
-      alert("✅ House Added Successfully");
-
-      navigate("/dashboard"); // ✅ FIXED: useNavigate is now properly initialised above
-
-      setForm({
-        details: "",
-        location: "",
-        type: "rent",
-        rent_price: "",
-        lease_amount: "",
-        lease_duration: "",
-        amenities: "",
-        phone: "",
-        whatsapp: "",
+      // 🔥 Append actual image files (not blob URLs)
+      images.forEach((img) => {
+        formData.append("images", img);
       });
 
+      const res = await fetch(
+        "https://rental-house-finder-47uv.onrender.com/api/houses/add",
+        {
+          method: "POST",
+          body: formData,
+          // ⚠️ Do NOT set Content-Type manually — browser sets it with boundary automatically
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.error) {
+        alert(data.error);
+      } else {
+        alert("House added successfully ✅");
+
+        setForm({
+          details: "",
+          location: "",
+          type: "rent",
+          rent_price: "",
+          lease_amount: "",
+          lease_duration: "",
+          amenities: "",
+          phone: "",
+          whatsapp: "",
+        });
+        setImages([]);
+        setPreviews([]);
+
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error(err);
       alert("❌ Error adding house");
@@ -289,16 +311,28 @@ function AddHouse() {
           </button>
 
           <div className="input-group">
-            <input name="phone" value={form.phone} placeholder=" " onFocus={() => {
-              if (!form.phone) setForm({ ...form, phone: "+91 " });
-            }} onChange={handleChange} />
+            <input
+              name="phone"
+              value={form.phone}
+              placeholder=" "
+              onFocus={() => {
+                if (!form.phone) setForm({ ...form, phone: "+91 " });
+              }}
+              onChange={handleChange}
+            />
             <label>Phone Number 📞</label>
           </div>
 
           <div className="input-group">
-            <input name="whatsapp" value={form.whatsapp} placeholder=" " onFocus={() => {
-              if (!form.whatsapp) setForm({ ...form, whatsapp: "+91 " });
-            }} onChange={handleChange} />
+            <input
+              name="whatsapp"
+              value={form.whatsapp}
+              placeholder=" "
+              onFocus={() => {
+                if (!form.whatsapp) setForm({ ...form, whatsapp: "+91 " });
+              }}
+              onChange={handleChange}
+            />
             <label>WhatsApp Number 💬</label>
           </div>
 
@@ -312,7 +346,13 @@ function AddHouse() {
 
           {form.type === "rent" && (
             <div className="input-group">
-              <input type="number" name="rent_price" value={form.rent_price} onChange={handleChange} placeholder=" " />
+              <input
+                type="number"
+                name="rent_price"
+                value={form.rent_price}
+                onChange={handleChange}
+                placeholder=" "
+              />
               <label>Monthly Rent ₹</label>
             </div>
           )}
@@ -320,11 +360,23 @@ function AddHouse() {
           {form.type === "lease" && (
             <>
               <div className="input-group">
-                <input type="number" name="lease_duration" value={form.lease_duration} onChange={handleChange} placeholder=" " />
+                <input
+                  type="number"
+                  name="lease_duration"
+                  value={form.lease_duration}
+                  onChange={handleChange}
+                  placeholder=" "
+                />
                 <label>Lease Duration</label>
               </div>
               <div className="input-group">
-                <input type="number" name="lease_amount" value={form.lease_amount} onChange={handleChange} placeholder=" " />
+                <input
+                  type="number"
+                  name="lease_amount"
+                  value={form.lease_amount}
+                  onChange={handleChange}
+                  placeholder=" "
+                />
                 <label>Lease Amount ₹</label>
               </div>
             </>
@@ -343,6 +395,7 @@ function AddHouse() {
             <input
               type="file"
               multiple
+              accept="image/*"
               onChange={handleImageChange}
             />
             <span className="upload-text">📸 Upload Your Home Images</span>
@@ -358,7 +411,12 @@ function AddHouse() {
           </div>
 
           <div className="input-group">
-            <input name="amenities" value={form.amenities} onChange={handleChange} placeholder=" " />
+            <input
+              name="amenities"
+              value={form.amenities}
+              onChange={handleChange}
+              placeholder=" "
+            />
             <label>Amenities</label>
           </div>
 
