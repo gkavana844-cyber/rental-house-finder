@@ -83,10 +83,10 @@ function AddHouse() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    details: "",
+    title: "",
     location: "",
     type: "rent",
-    rent_price: "",
+    price: "",
     lease_amount: "",
     lease_duration: "",
     amenities: "",
@@ -195,7 +195,7 @@ function AddHouse() {
     return digits.length === 10;
   };
 
-  /* 🚀 UPDATED SUBMIT — uses FormData + real image file uploads */
+  /* 🚀 UPDATED SUBMIT */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -209,45 +209,29 @@ function AddHouse() {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("title", form.title);
+    formData.append("location", form.location);
+    formData.append("type", form.type);
+    formData.append("price", form.price);
+    formData.append("lease_duration", form.lease_duration);
+    formData.append("amenities", form.amenities);
+    formData.append("latitude", coords.lat);
+    formData.append("longitude", coords.lng);
+    formData.append("phone", form.phone.replace(/\D/g, "").slice(-10));
+    formData.append("whatsapp", form.whatsapp ? form.whatsapp.replace(/\D/g, "").slice(-10) : "");
+
+    // 🔥 images
+    images.forEach((img) => {
+      formData.append("images", img);
+    });
+
     try {
-      const formData = new FormData();
-
-      formData.append("title", form.details);
-      formData.append("location", form.location);
-      formData.append("type", form.type);
-      formData.append(
-        "price",
-        form.type === "rent" ? form.rent_price : form.lease_amount
-      );
-      formData.append(
-        "lease_duration",
-        form.type === "lease" ? form.lease_duration : ""
-      );
-      formData.append("amenities", form.amenities);
-      formData.append("latitude", coords.lat);
-      formData.append("longitude", coords.lng);
-
-      // 🔥 Clean phone numbers — strip formatting, keep last 10 digits
-      formData.append(
-        "phone",
-        form.phone.replace(/\D/g, "").slice(-10)
-      );
-      formData.append(
-        "whatsapp",
-        form.whatsapp ? form.whatsapp.replace(/\D/g, "").slice(-10) : ""
-      );
-
-      // 🔥 Append actual image files (not blob URLs)
-      images.forEach((img) => {
-        formData.append("images", img);
-      });
-
       const res = await fetch(
         "https://rental-house-finder-47uv.onrender.com/api/houses/add",
         {
           method: "POST",
-          body: formData,
-          // ⚠️ Do NOT set Content-Type manually — browser sets it with boundary automatically
+          body: formData, // ❗ NO headers — browser sets Content-Type with boundary automatically
         }
       );
 
@@ -257,26 +241,11 @@ function AddHouse() {
         alert(data.error);
       } else {
         alert("House added successfully ✅");
-
-        setForm({
-          details: "",
-          location: "",
-          type: "rent",
-          rent_price: "",
-          lease_amount: "",
-          lease_duration: "",
-          amenities: "",
-          phone: "",
-          whatsapp: "",
-        });
-        setImages([]);
-        setPreviews([]);
-
-        navigate("/dashboard");
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       console.error(err);
-      alert("❌ Error adding house");
+      alert("Error adding house");
     }
   };
 
@@ -287,7 +256,7 @@ function AddHouse() {
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <input name="details" value={form.details} placeholder=" " onChange={handleChange} />
+            <input name="title" value={form.title} placeholder=" " onChange={handleChange} />
             <label>House Details</label>
           </div>
 
@@ -348,8 +317,8 @@ function AddHouse() {
             <div className="input-group">
               <input
                 type="number"
-                name="rent_price"
-                value={form.rent_price}
+                name="price"
+                value={form.price}
                 onChange={handleChange}
                 placeholder=" "
               />
@@ -372,8 +341,8 @@ function AddHouse() {
               <div className="input-group">
                 <input
                   type="number"
-                  name="lease_amount"
-                  value={form.lease_amount}
+                  name="price"
+                  value={form.price}
                   onChange={handleChange}
                   placeholder=" "
                 />

@@ -1,4 +1,4 @@
-from flask import current_app, request
+from flask import current_app, request, jsonify
 from datetime import datetime
 import re
 import cloudinary
@@ -28,7 +28,7 @@ def add_house():
     location = data.get("location")
 
     if not title or not location:
-        return {"success": False, "error": "Title and Location are required"}
+        return jsonify({"success": False, "error": "Title and Location are required"}), 400
 
     # =========================
     # ✅ TYPE
@@ -36,7 +36,7 @@ def add_house():
     house_type = data.get("type", "rent")
 
     if house_type not in ["rent", "lease"]:
-        return {"success": False, "error": "Invalid house type"}
+        return jsonify({"success": False, "error": "Invalid house type"}), 400
 
     # =========================
     # 💰 PRICE / LEASE
@@ -46,23 +46,23 @@ def add_house():
 
     if house_type == "rent":
         if not price:
-            return {"success": False, "error": "Monthly rent required"}
+            return jsonify({"success": False, "error": "Monthly rent required"}), 400
 
         try:
             price = int(price)
         except:
-            return {"success": False, "error": "Invalid price"}
+            return jsonify({"success": False, "error": "Invalid price"}), 400
 
         lease_duration = None
 
     elif house_type == "lease":
         if not lease_duration:
-            return {"success": False, "error": "Lease duration required"}
+            return jsonify({"success": False, "error": "Lease duration required"}), 400
 
         try:
             lease_duration = int(lease_duration)
         except:
-            return {"success": False, "error": "Invalid lease duration"}
+            return jsonify({"success": False, "error": "Invalid lease duration"}), 400
 
         price = None
 
@@ -87,10 +87,10 @@ def add_house():
     whatsapp = clean_number(whatsapp)
 
     if not phone or len(phone) != 10:
-        return {"success": False, "error": "Invalid phone number"}
+        return jsonify({"success": False, "error": "Invalid phone number"}), 400
 
     if whatsapp and len(whatsapp) != 10:
-        return {"success": False, "error": "Invalid WhatsApp number"}
+        return jsonify({"success": False, "error": "Invalid WhatsApp number"}), 400
 
     # =========================
     # 🧾 AMENITIES
@@ -110,7 +110,7 @@ def add_house():
             image_urls.append(result["secure_url"])
     except Exception as e:
         print("❌ Image Upload Error:", e)
-        return {"success": False, "error": "Image upload failed"}
+        return jsonify({"success": False, "error": "Image upload failed"}), 500
 
     # =========================
     # 📍 MAP LOCATION
@@ -141,7 +141,7 @@ def add_house():
         "price": price,
         "lease_duration": lease_duration,
 
-        "images": image_urls,  # 🔥 FIXED (cloud URLs)
+        "images": image_urls,  # 🔥 cloud URLs
         "amenities": amenities,
 
         "latitude": latitude,
@@ -159,12 +159,12 @@ def add_house():
     try:
         result = db.houses.insert_one(house)
 
-        return {
+        return jsonify({
             "success": True,
             "message": "House added successfully ✅",
             "id": str(result.inserted_id)
-        }
+        }), 201
 
     except Exception as e:
         print("❌ DB ERROR:", e)
-        return {"success": False, "error": "Database error"}
+        return jsonify({"success": False, "error": "Database error"}), 500
