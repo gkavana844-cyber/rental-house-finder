@@ -87,7 +87,6 @@ function AddHouse() {
     location: "",
     type: "rent",
     price: "",
-    lease_amount: "",
     lease_duration: "",
     amenities: "",
     phone: "",
@@ -221,7 +220,6 @@ function AddHouse() {
     formData.append("phone", form.phone.replace(/\D/g, "").slice(-10));
     formData.append("whatsapp", form.whatsapp ? form.whatsapp.replace(/\D/g, "").slice(-10) : "");
 
-    // 🔥 images
     images.forEach((img) => {
       formData.append("images", img);
     });
@@ -231,21 +229,32 @@ function AddHouse() {
         "https://rental-house-finder-47uv.onrender.com/api/houses/add",
         {
           method: "POST",
-          body: formData, // ❗ NO headers — browser sets Content-Type with boundary automatically
+          body: formData,
         }
       );
 
-      const data = await res.json();
+      // 🔥 FIX: handle non-JSON response
+      const text = await res.text();
+      console.log("RAW RESPONSE:", text);
 
-      if (data.error) {
-        alert(data.error);
-      } else {
-        alert("House added successfully ✅");
-        window.location.href = "/dashboard";
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        alert("Server error (not JSON)");
+        return;
       }
+
+      if (!res.ok) {
+        alert(data.error || "Error adding house");
+        return;
+      }
+
+      alert("House added successfully ✅");
+      window.location.href = "/dashboard";
     } catch (err) {
       console.error(err);
-      alert("Error adding house");
+      alert("Network error");
     }
   };
 

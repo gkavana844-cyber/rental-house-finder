@@ -16,155 +16,160 @@ cloudinary.config(
 def add_house():
     db = current_app.db
 
-    data = request.form  # 🔥 form-data
-    files = request.files.getlist("images")  # 🔥 images
+    try:
+        # 🔥 DEBUG (VERY IMPORTANT)
+        print("FORM DATA:", request.form)
+        print("FILES:", request.files)
 
-    print("🔥 Incoming Data:", data)
+        data = request.form
+        files = request.files.getlist("images")
 
-    # =========================
-    # ✅ REQUIRED VALIDATION
-    # =========================
-    title = data.get("title")
-    location = data.get("location")
+        # =========================
+        # ✅ REQUIRED VALIDATION
+        # =========================
+        title = data.get("title")
+        location = data.get("location")
 
-    if not title or not location:
-        return jsonify({"success": False, "error": "Title and Location are required"}), 400
+        if not title or not location:
+            return jsonify({"error": "Title and Location are required"}), 400
 
-    # =========================
-    # ✅ TYPE
-    # =========================
-    house_type = data.get("type", "rent")
+        # =========================
+        # ✅ TYPE
+        # =========================
+        house_type = data.get("type", "rent")
 
-    if house_type not in ["rent", "lease"]:
-        return jsonify({"success": False, "error": "Invalid house type"}), 400
+        if house_type not in ["rent", "lease"]:
+            return jsonify({"error": "Invalid house type"}), 400
 
-    # =========================
-    # 💰 PRICE / LEASE
-    # =========================
-    price = data.get("price")
-    lease_duration = data.get("lease_duration")
+        # =========================
+        # 💰 PRICE / LEASE
+        # =========================
+        price = data.get("price")
+        lease_duration = data.get("lease_duration")
 
-    if house_type == "rent":
-        if not price:
-            return jsonify({"success": False, "error": "Monthly rent required"}), 400
+        if house_type == "rent":
+            if not price:
+                return jsonify({"error": "Monthly rent required"}), 400
+
+            try:
+                price = int(price)
+            except:
+                return jsonify({"error": "Invalid price"}), 400
+
+            lease_duration = None
+
+        elif house_type == "lease":
+            if not lease_duration:
+                return jsonify({"error": "Lease duration required"}), 400
+
+            try:
+                lease_duration = int(lease_duration)
+            except:
+                return jsonify({"error": "Invalid lease duration"}), 400
+
+            price = None
+
+        # =========================
+        # 📞 PHONE + WHATSAPP
+        # =========================
+        phone = data.get("phone")
+        whatsapp = data.get("whatsapp")
+
+        def clean_number(num):
+            if not num:
+                return None
+
+            digits = re.sub(r"\D", "", num)
+
+            if digits.startswith("91"):
+                digits = digits[2:]
+
+            return digits
+
+        phone = clean_number(phone)
+        whatsapp = clean_number(whatsapp)
+
+        if not phone or len(phone) != 10:
+            return jsonify({"error": "Invalid phone number"}), 400
+
+        if whatsapp and len(whatsapp) != 10:
+            return jsonify({"error": "Invalid WhatsApp number"}), 400
+
+        # =========================
+        # 🧾 AMENITIES
+        # =========================
+        amenities = data.get("amenities", "")
+        if isinstance(amenities, str):
+            amenities = [a.strip() for a in amenities.split(",") if a.strip()]
+
+        # =========================
+        # 🖼 IMAGE UPLOAD
+        # =========================
+        image_urls = []
 
         try:
-            price = int(price)
-        except:
-            return jsonify({"success": False, "error": "Invalid price"}), 400
+            for file in files:
+                if file and file.filename != "":
+                    result = cloudinary.uploader.upload(file)
+                    image_urls.append(result["secure_url"])
+        except Exception as e:
+            print("❌ Image Upload Error:", e)
+            return jsonify({"error": "Image upload failed"}), 500
 
-        lease_duration = None
-
-    elif house_type == "lease":
-        if not lease_duration:
-            return jsonify({"success": False, "error": "Lease duration required"}), 400
+        # =========================
+        # 📍 MAP LOCATION
+        # =========================
+        latitude = data.get("latitude")
+        longitude = data.get("longitude")
 
         try:
-            lease_duration = int(lease_duration)
+            latitude = float(latitude) if latitude else None
+            longitude = float(longitude) if longitude else None
         except:
-            return jsonify({"success": False, "error": "Invalid lease duration"}), 400
+            latitude = None
+            longitude = None
 
-        price = None
+        # =========================
+        # 🧹 CLEAN LOCATION
+        # =========================
+        location = str(location).strip()
 
-    # =========================
-    # 📞 PHONE + WHATSAPP
-    # =========================
-    phone = data.get("phone")
-    whatsapp = data.get("whatsapp")
+        # =========================
+        # ✅ FINAL OBJECT
+        # =========================
+        house = {
+            "title": title,
+            "location": location,
+            "type": house_type,
 
-    def clean_number(num):
-        if not num:
-            return None
+            "price": price,
+            "lease_duration": lease_duration,
 
-        digits = re.sub(r"\D", "", num)
+            "images": image_urls,
+            "amenities": amenities,
 
-        if digits.startswith("91"):
-            digits = digits[2:]
+            "latitude": latitude,
+            "longitude": longitude,
 
-        return digits
+            "phone": phone,
+            "whatsapp": whatsapp,
 
-    phone = clean_number(phone)
-    whatsapp = clean_number(whatsapp)
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
 
-    if not phone or len(phone) != 10:
-        return jsonify({"success": False, "error": "Invalid phone number"}), 400
+        print("✅ Saving to DB:", house)
 
-    if whatsapp and len(whatsapp) != 10:
-        return jsonify({"success": False, "error": "Invalid WhatsApp number"}), 400
-
-    # =========================
-    # 🧾 AMENITIES
-    # =========================
-    amenities = data.get("amenities", [])
-    if isinstance(amenities, str):
-        amenities = [a.strip() for a in amenities.split(",") if a.strip()]
-
-    # =========================
-    # 🖼 IMAGE UPLOAD (CLOUDINARY 🔥)
-    # =========================
-    image_urls = []
-
-    try:
-        for file in files:
-            result = cloudinary.uploader.upload(file)
-            image_urls.append(result["secure_url"])
-    except Exception as e:
-        print("❌ Image Upload Error:", e)
-        return jsonify({"success": False, "error": "Image upload failed"}), 500
-
-    # =========================
-    # 📍 MAP LOCATION
-    # =========================
-    latitude = data.get("latitude")
-    longitude = data.get("longitude")
-
-    try:
-        latitude = float(latitude) if latitude else None
-        longitude = float(longitude) if longitude else None
-    except:
-        latitude = None
-        longitude = None
-
-    # =========================
-    # 🧹 CLEAN LOCATION
-    # =========================
-    location = str(location).strip()
-
-    # =========================
-    # ✅ FINAL OBJECT
-    # =========================
-    house = {
-        "title": title,
-        "location": location,
-        "type": house_type,
-
-        "price": price,
-        "lease_duration": lease_duration,
-
-        "images": image_urls,  # 🔥 cloud URLs
-        "amenities": amenities,
-
-        "latitude": latitude,
-        "longitude": longitude,
-
-        "phone": phone,
-        "whatsapp": whatsapp,
-
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
-    }
-
-    print("✅ Saving to DB:", house)
-
-    try:
+        # =========================
+        # 💾 DATABASE SAVE
+        # =========================
         result = db.houses.insert_one(house)
 
         return jsonify({
-            "success": True,
             "message": "House added successfully ✅",
             "id": str(result.inserted_id)
         }), 201
 
     except Exception as e:
-        print("❌ DB ERROR:", e)
-        return jsonify({"success": False, "error": "Database error"}), 500
+        print("❌ SERVER ERROR:", e)
+        return jsonify({"error": "Internal server error"}), 500
