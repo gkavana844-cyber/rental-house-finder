@@ -251,7 +251,7 @@ function AddHouse() {
       }
 
       alert("House added successfully ✅");
-      window.location.href = "/dashboard";
+      navigate("/dashboard"); // ✅ FIXED: Using navigate instead of window.location
     } catch (err) {
       console.error(err);
       alert("Network error");

@@ -103,7 +103,7 @@ def add_house():
             amenities = [a.strip() for a in amenities.split(",") if a.strip()]
 
         # =========================
-        # 🖼 IMAGE UPLOAD
+        # 🖼 IMAGE UPLOAD (UPDATED ✅)
         # =========================
         image_urls = []
 
@@ -111,10 +111,15 @@ def add_house():
             for file in files:
                 if file and file.filename != "":
                     result = cloudinary.uploader.upload(file)
-                    image_urls.append(result["secure_url"])
+
+                    print("🔥 Cloudinary Upload Response:", result)  # DEBUG
+                    print("🔥 Image URL:", result.get("secure_url"))
+
+                    image_urls.append(result.get("secure_url"))
+
         except Exception as e:
-            print("❌ Image Upload Error:", e)
-            return jsonify({"error": "Image upload failed"}), 500
+            print("❌ Cloudinary Error:", e)
+            return jsonify({"success": False, "error": "Image upload failed"}), 500
 
         # =========================
         # 📍 MAP LOCATION
