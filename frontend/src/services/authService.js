@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API = "http://127.0.0.1:5000/api/auth";
+// 🔥 UPDATED (LIVE BACKEND)
+const API = "https://rental-house-finder-47uv.onrender.com/api/auth";
 
 // ✅ REGISTER
 export const registerUser = async (data) => {
@@ -17,7 +18,7 @@ export const registerUser = async (data) => {
 export const loginUser = async (data) => {
   try {
     const res = await axios.post(`${API}/login`, data);
-    console.log("LOGIN RESPONSE:", res.data); // 🔥 debug
+    console.log("LOGIN RESPONSE:", res.data);
     return res.data;
   } catch (error) {
     console.error("LOGIN ERROR:", error);

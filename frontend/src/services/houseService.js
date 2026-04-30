@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API = "http://127.0.0.1:5000/api/houses";
+// 🔥 UPDATED (LIVE BACKEND)
+const API = "https://rental-house-finder-47uv.onrender.com/api/houses";
 
 // ✅ Get all houses
 export const getHouses = async () => {
@@ -46,4 +47,4 @@ export const getHouseById = async (id) => {
     console.error("DETAIL ERROR:", error);
     return null;
   }
-};  
+};
