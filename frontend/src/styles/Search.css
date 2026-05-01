@@ -201,3 +201,16 @@
     width: 100%;
   }
 }
+.furniture-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.furniture-card {
+  background: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  width: 200px;
+}

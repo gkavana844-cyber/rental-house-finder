@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { getHouses } from "../services/houseService";
+import { getFurniture } from "../services/furnitureService";
 import "../styles/Search.css";
 
 /* 🔥 Distance formula */
@@ -35,6 +36,7 @@ const formatPhone = (num) => {
 function Search() {
   const [houses, setHouses] = useState([]);
   const [filtered, setFiltered] = useState([]);
+  const [furniture, setFurniture] = useState([]);   // ✅ STEP 2: Furniture state
 
   const [filters, setFilters] = useState({
     location: "",
@@ -48,6 +50,14 @@ function Search() {
   /* 🔥 LIVE LOCATION TRACKING */
   useEffect(() => {
     fetchHouses();
+
+    // ✅ STEP 3: Fetch furniture inside useEffect
+    const loadFurniture = async () => {
+      const data = await getFurniture();
+      setFurniture(data);
+    };
+
+    loadFurniture();
 
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
@@ -192,6 +202,13 @@ function Search() {
 
                 <p>📍 {h.location}</p>
 
+                {/* 🔥 ADDED AMENITIES */}
+                {h.amenities && h.amenities.length > 0 && (
+                  <p className="amenities">
+                    🧾 {h.amenities.join(", ")}
+                  </p>
+                )}
+
                 {h.type === "rent" && (
                   <p className="price">₹{h.price}/month</p>
                 )}
@@ -235,6 +252,19 @@ function Search() {
             </div>
           );
         })}
+      </div>
+
+      {/* ✅ STEP 4: Furniture Section */}
+      <h2>🪑 Available Furniture</h2>
+
+      <div className="furniture-grid">
+        {furniture.map((f, i) => (
+          <div key={i} className="furniture-card">
+            <h3>{f.name}</h3>
+            <p>💰 ₹{f.price}</p>
+            {f.contact && <p>📞 {f.contact}</p>}
+          </div>
+        ))}
       </div>
     </div>
   );
