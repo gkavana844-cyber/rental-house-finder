@@ -12,23 +12,34 @@ function Dashboard() {
       </p>
 
       <div className="card-container">
-        {/* ADD HOUSE CARD */}
+
+        {/* ➕ ADD HOUSE */}
         <div
           className="card add"
           onClick={() => navigate("/add-house")}
         >
-          <h2>➕ Add Your House</h2>
+          <h2> Add Your House</h2>
           <p>List your property and reach more customers</p>
         </div>
 
-        {/* SEARCH HOUSE CARD */}
+        {/* 🔍 SEARCH HOUSE */}
         <div
           className="card search"
           onClick={() => navigate("/search")}
         >
           <h2>🔍 Search House</h2>
-          <p>Find houses based on your needs & location</p>
+          <p>Find houses & furniture in one place</p>
         </div>
+
+        {/* 🪑 ADD FURNITURE */}
+        <div
+          className="card furniture"
+          onClick={() => navigate("/add-furniture")}
+        >
+          <h2>🪑 Add Furniture</h2>
+          <p>Add furniture like bed, sofa, table</p>
+        </div>
+
       </div>
     </div>
   );
