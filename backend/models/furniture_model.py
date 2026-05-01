@@ -2,13 +2,16 @@ from datetime import datetime
 import re
 
 
+# =========================
+# 📞 CLEAN PHONE
+# =========================
 def clean_phone(number):
     if not number:
         return None
 
     digits = re.sub(r"\D", "", number)
 
-    # remove +91 if exists
+    # remove country code 91
     if digits.startswith("91"):
         digits = digits[2:]
 
@@ -19,7 +22,10 @@ def clean_phone(number):
     return digits
 
 
-def create_furniture(data):
+# =========================
+# 🪑 CREATE FURNITURE MODEL
+# =========================
+def create_furniture(data, image_url=None):
     """
     Validate and prepare furniture data
     """
@@ -42,7 +48,11 @@ def create_furniture(data):
     except:
         return {"success": False, "error": "Invalid price"}
 
+    # 📞 Clean phone
     contact = clean_phone(contact)
+
+    if not contact:
+        return {"success": False, "error": "Invalid phone number"}
 
     # =========================
     # ✅ FINAL OBJECT
@@ -51,7 +61,12 @@ def create_furniture(data):
         "name": name.strip(),
         "price": price,
         "contact": contact,
-        "created_at": datetime.utcnow()
+        "image": image_url,  # 🔥 NEW (optional)
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow()
     }
 
-    return {"success": True, "data": furniture}
+    return {
+        "success": True,
+        "data": furniture
+    }

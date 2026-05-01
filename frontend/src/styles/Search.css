@@ -201,16 +201,118 @@
     width: 100%;
   }
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🪑 FURNITURE SECTION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.furniture-section {
+  margin-top: 30px;
+}
+
+.furniture-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
 .furniture-grid {
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
+  gap: 20px;
   margin-top: 20px;
 }
 
 .furniture-card {
-  background: #fff;
-  padding: 10px;
-  border-radius: 10px;
-  width: 200px;
+  width: 260px;
+  background: #f5f7fa;
+  border-radius: 18px;
+  overflow: hidden;
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+.furniture-card:hover {
+  transform: translateY(-5px);
+}
+
+.furniture-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.furniture-body {
+  padding: 15px;
+}
+
+.furniture-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.furniture-price {
+  color: #007bff;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.furniture-contact {
+  font-size: 14px;
+  color: #555;
+}
+
+.furniture-buttons {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-whatsapp {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #25d366;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-whatsapp:hover {
+  background: #1da851;
+  transform: translateY(-2px);
+}
+
+.btn-call {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-call:hover {
+  background: #0056cc;
+  transform: translateY(-2px);
+}
+
+/* 📱 MOBILE - furniture */
+@media (max-width: 600px) {
+  .furniture-grid {
+    justify-content: center;
+  }
+
+  .furniture-card {
+    width: 100%;
+    max-width: 340px;
+  }
 }
