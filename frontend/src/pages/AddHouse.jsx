@@ -172,10 +172,20 @@ function AddHouse() {
     setSuggestions([]);
   };
 
+  /* 🔥 FIXED IMAGE HANDLING ✅ */
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
-    setPreviews(files.map((f) => URL.createObjectURL(f)));
+    const files = e.target.files;
+
+    const fileArray = [];
+    const previewArray = [];
+
+    for (let i = 0; i < files.length; i++) {
+      fileArray.push(files[i]);
+      previewArray.push(URL.createObjectURL(files[i]));
+    }
+
+    setImages(fileArray);
+    setPreviews(previewArray);
   };
 
   const removeImage = (i) => {
@@ -194,7 +204,7 @@ function AddHouse() {
     return digits.length === 10;
   };
 
-  /* 🚀 UPDATED SUBMIT */
+  /* 🚀 UPDATED SUBMIT (CONFIRMED ✅) */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -251,7 +261,7 @@ function AddHouse() {
       }
 
       alert("House added successfully ✅");
-      navigate("/dashboard"); // ✅ FIXED: Using navigate instead of window.location
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
       alert("Network error");
