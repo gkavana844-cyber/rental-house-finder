@@ -11,8 +11,8 @@ export default function AddFurniture() {
     contact: ""
   });
 
-  const [image, setImage] = useState(null); // ✅ NEW
-  const [preview, setPreview] = useState(null); // ✅ NEW
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -50,6 +50,12 @@ export default function AddFurniture() {
     }
   };
 
+  // ❌ REMOVE IMAGE
+  const removeImage = () => {
+    setImage(null);
+    setPreview(null);
+  };
+
   // 📤 SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,7 +67,13 @@ export default function AddFurniture() {
       return;
     }
 
+    if (cleanNumber.length !== 10) {
+      setMessage("❌ Enter valid phone number");
+      return;
+    }
+
     setLoading(true);
+    setMessage("");
 
     try {
       const formData = new FormData();
@@ -71,7 +83,7 @@ export default function AddFurniture() {
       formData.append("contact", cleanNumber);
 
       if (image) {
-        formData.append("image", image); // 🔥 SEND IMAGE
+        formData.append("image", image);
       }
 
       const res = await fetch(
@@ -85,14 +97,22 @@ export default function AddFurniture() {
       const data = await res.json();
 
       if (data.success) {
-        setMessage("✅ Furniture added");
+        setMessage("✅ Furniture added successfully");
 
-        setTimeout(() => navigate("/"), 1000);
+        setForm({ name: "", price: "", contact: "" });
+        setImage(null);
+        setPreview(null);
+
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1200);
+
       } else {
-        setMessage(data.error);
+        setMessage(data.error || "❌ Failed to add furniture");
       }
 
     } catch (err) {
+      console.error(err);
       setMessage("❌ Upload failed");
     }
 
@@ -105,27 +125,73 @@ export default function AddFurniture() {
         <h2>🪑 Add Furniture</h2>
 
         <form onSubmit={handleSubmit}>
-          <input name="name" placeholder="Furniture Name" value={form.name} onChange={handleChange} />
-          <input name="price" type="number" placeholder="Price ₹" value={form.price} onChange={handleChange} />
 
-          <input
-            name="contact"
-            placeholder="+91 98765 43210"
-            value={form.contact}
-            onChange={handleChange}
-          />
+          {/* ━━ NAME ━━ */}
+          <div className="input-group">
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label>Furniture Name (Bed, Sofa...)</label>
+          </div>
 
-          {/* 📸 IMAGE INPUT */}
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          {/* ━━ PRICE ━━ */}
+          <div className="input-group">
+            <input
+              name="price"
+              type="number"
+              value={form.price}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label>Price ₹</label>
+          </div>
 
-          {/* PREVIEW */}
-          {preview && <img src={preview} className="preview" alt="preview" />}
+          {/* ━━ CONTACT ━━ */}
+          <div className="input-group">
+            <input
+              name="contact"
+              value={form.contact}
+              onChange={handleChange}
+              required
+              placeholder=" "
+            />
+            <label>+91 77777 88888</label>
+          </div>
 
-          <button disabled={loading}>
+          {/* 🔥 CUSTOM UPLOAD */}
+          <label className="upload-box">
+            📸 Add your furniture image
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              hidden
+            />
+          </label>
+
+          {/* 🖼 PREVIEW */}
+          {preview && (
+            <div className="preview-container">
+              <img src={preview} alt="preview" />
+              <button type="button" onClick={removeImage}>❌</button>
+            </div>
+          )}
+
+          <button type="submit" disabled={loading}>
             {loading ? "Uploading..." : "Add Furniture"}
           </button>
 
-          {message && <p className="msg">{message}</p>}
+          {message && (
+            <p className={message.includes("✅") ? "success" : "error"}>
+              {message}
+            </p>
+          )}
+
         </form>
       </div>
     </div>

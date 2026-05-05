@@ -5,7 +5,6 @@
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  padding: 20px;
 }
 
 /* 📦 CARD */
@@ -13,99 +12,131 @@
   width: 100%;
   max-width: 450px;
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
   padding: 30px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   color: #fff;
-  animation: fadeIn 0.4s ease-in-out;
 }
 
 /* 🏷 TITLE */
 .furniture-card h2 {
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 24px;
-  font-weight: 600;
+  margin-bottom: 25px;
 }
 
-/* 📥 INPUTS */
-.furniture-card input {
+/* ========================= */
+/* 🔥 FLOATING INPUT */
+/* ========================= */
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-group input {
   width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  color: white;
   outline: none;
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.12);
-  color: white;
-  transition: 0.3s;
 }
 
-/* ✨ INPUT FOCUS */
-.furniture-card input:focus {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid #00c6ff;
+/* ✨ GLOW */
+.input-group input:focus {
+  border-color: #00d4ff;
+  box-shadow: 0 0 12px #00d4ff;
+}
+
+/* 🏷 LABEL */
+.input-group label {
+  position: absolute;
+  left: 15px;
+  top: 16px;
+  color: #bbb;
+  font-size: 14px;
+  pointer-events: none;
+  transition: 0.3s;
+  background: transparent;
+}
+
+/* 🔥 FLOAT EFFECT */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group input:valid + label {
+  top: -8px;
+  left: 12px;
+  font-size: 12px;
+  color: #00d4ff;
+  background: #203a43;
+  padding: 0 6px;
+  border-radius: 6px;
+}
+
+/* ========================= */
+/* 📸 UPLOAD BOX */
+/* ========================= */
+
+.upload-box {
+  display: block;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px dashed #00d4ff;
+  text-align: center;
+  color: #ccc;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.upload-box:hover {
+  background: rgba(0, 212, 255, 0.1);
+}
+
+/* 🖼 PREVIEW */
+.preview-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.preview-container img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.preview-container button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 5px 8px;
 }
 
 /* 🔘 BUTTON */
 .furniture-card button {
   width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  border-radius: 10px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #00c6ff, #0072ff);
   color: white;
   font-size: 16px;
-  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-/* 🔥 BUTTON HOVER */
-.furniture-card button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(135deg, #0072ff, #00c6ff);
-}
-
-/* ❌ ERROR */
-.error-text {
-  color: #ff6b6b;
-  font-size: 13px;
-  margin-top: 5px;
-  text-align: center;
-}
-
-/* ✅ SUCCESS */
-.success-text {
+/* MESSAGE */
+.success {
   color: #4caf50;
-  font-size: 13px;
-  margin-top: 5px;
   text-align: center;
 }
 
-/* 🎬 ANIMATION */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.preview {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  margin-top: 10px;
-  border-radius: 10px;
-}
-
-.msg {
-  margin-top: 10px;
+.error {
+  color: #ff6b6b;
   text-align: center;
 }

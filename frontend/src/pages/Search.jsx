@@ -3,7 +3,7 @@ import { getHouses } from "../services/houseService";
 import { getFurniture } from "../services/furnitureService";
 import "../styles/Search.css";
 
-/* 🔥 Distance formula */
+/*  Distance formula */
 const getDistance = (lat1, lon1, lat2, lon2) => {
   const toRad = (v) => (v * Math.PI) / 180;
   const R = 6371;
@@ -36,7 +36,7 @@ const formatPhone = (num) => {
 function Search() {
   const [houses, setHouses] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [furniture, setFurniture] = useState([]);   // ✅ STEP 2: Furniture state
+  const [furniture, setFurniture] = useState([]);
 
   const [filters, setFilters] = useState({
     location: "",
@@ -51,7 +51,6 @@ function Search() {
   useEffect(() => {
     fetchHouses();
 
-    // ✅ STEP 3: Fetch furniture inside useEffect
     const loadFurniture = async () => {
       const data = await getFurniture();
       setFurniture(data);
@@ -148,7 +147,7 @@ function Search() {
 
   return (
     <div className="search-container">
-      <h1>🏠 Find Your Dream House</h1>
+      <h1> Find Your Dream House</h1>
 
       {/* 🔍 SEARCH BAR */}
       <div className="search-bar">
@@ -254,18 +253,52 @@ function Search() {
         })}
       </div>
 
-      {/* ✅ STEP 4: Furniture Section */}
-      <h2>🪑 Available Furniture</h2>
+      {/* ✅ FURNITURE SECTION (UPDATED UI) */}
+      <h2 className="furniture-title"> Available Furniture</h2>
 
       <div className="furniture-grid">
         {furniture.map((f, i) => (
           <div key={i} className="furniture-card">
-            <h3>{f.name}</h3>
-            <p>💰 ₹{f.price}</p>
-            {f.contact && <p>📞 {f.contact}</p>}
+
+            {/* 🖼 IMAGE */}
+            <img
+              src={f.image || "https://via.placeholder.com/300x200"}
+              alt={f.name}
+              className="furniture-image"
+            />
+
+            <div className="furniture-body">
+              <h3 className="furniture-name">{f.name}</h3>
+
+              <p className="furniture-price">₹{f.price}</p>
+
+              {f.contact && (
+                <p className="furniture-contact">📞 {formatPhone(f.contact)}</p>
+              )}
+
+              <div className="furniture-buttons">
+                <a
+                  href={`https://wa.me/91${f.contact}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-whatsapp"
+                >
+                  💬 WhatsApp
+                </a>
+
+                <a
+                  href={`tel:${f.contact}`}
+                  className="btn-call"
+                >
+                  📞 Call
+                </a>
+              </div>
+            </div>
+
           </div>
         ))}
       </div>
+
     </div>
   );
 }

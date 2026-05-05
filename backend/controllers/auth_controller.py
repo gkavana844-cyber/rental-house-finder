@@ -8,10 +8,8 @@ from models.user_model import create_user, find_user
 # 🔐 SECRET from .env
 SECRET = os.getenv("SECRET_KEY")
 
+#  VALIDATORS
 
-# =========================
-# 🔍 VALIDATORS
-# =========================
 
 def is_valid_email_or_phone(value):
     email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
@@ -37,10 +35,8 @@ def clean_phone(value):
 
     return digits
 
+#  REGISTER
 
-# =========================
-# ✅ REGISTER
-# =========================
 def register_user(data):
     name = data.get("name")
     email = data.get("email")
@@ -95,7 +91,7 @@ def login_user(data):
     if not email or not password:
         return {"success": False, "error": "Email and password required"}
 
-    # 🔴 Clean phone login
+    #  Clean phone login
     if re.match(r"^(\+91[\-\s]?)?[6-9]\d{9}$", email):
         email = clean_phone(email)
 

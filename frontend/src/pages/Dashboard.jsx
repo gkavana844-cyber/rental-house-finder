@@ -27,7 +27,7 @@ function Dashboard() {
           className="card search"
           onClick={() => navigate("/search")}
         >
-          <h2>🔍 Search House</h2>
+          <h2>🔍 Search House And View Furniture </h2>
           <p>Find houses & furniture in one place</p>
         </div>
 
