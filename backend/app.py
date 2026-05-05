@@ -4,11 +4,6 @@ from config import Config
 from pymongo import MongoClient
 import os
 
-# Import routes
-from routes.house_routes import house_bp
-from routes.auth_routes import auth_bp
-from routes.furniture_routes import furniture_bp
-
 # =========================
 # 🚀 APP INIT
 # =========================
@@ -18,13 +13,17 @@ app.config.from_object(Config)
 # =========================
 # 🌐 CORS (ALLOW FRONTEND)
 # =========================
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
 # =========================
 # 🧠 MONGODB CONNECTION
 # =========================
 try:
-    mongo_uri = app.config["MONGO_URI"]
+    mongo_uri = os.environ.get("MONGO_URI") or app.config.get("MONGO_URI")
+
+    if not mongo_uri:
+        raise Exception("MONGO_URI not found")
+
     print("MONGO_URI:", mongo_uri)
 
     client = MongoClient(mongo_uri)
@@ -39,7 +38,7 @@ except Exception as e:
 # =========================
 # 🔐 SECRET KEY
 # =========================
-app.config["SECRET_KEY"] = app.config.get("SECRET_KEY", "secret123")
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "secret123")
 
 # =========================
 # 🏠 HOME ROUTE
@@ -51,13 +50,16 @@ def home():
 # =========================
 # 🔗 REGISTER ROUTES
 # =========================
+from routes.house_routes import house_bp
+from routes.auth_routes import auth_bp
+from routes.furniture_routes import furniture_bp
+
 app.register_blueprint(house_bp, url_prefix="/api/houses")
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
 app.register_blueprint(furniture_bp, url_prefix="/api/furniture")
 
 # =========================
-# 🚀 RUN SERVER (RAILWAY FIX)
+# 🚀 RUN SERVER (LOCAL ONLY)
 # =========================
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # 🔥 IMPORTANT
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000, debug=True)
