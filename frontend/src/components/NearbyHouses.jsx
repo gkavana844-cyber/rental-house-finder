@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 function NearbyHouses() {
 
   const [houses, setHouses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
@@ -14,6 +15,12 @@ function NearbyHouses() {
           "https://rental-house-finder-47uv.onrender.com/api/external/houses"
         );
 
+        if (!response.ok) {
+          throw new Error(
+            "Failed to fetch houses"
+          );
+        }
+
         const data = await response.json();
 
         setHouses(data);
@@ -24,6 +31,10 @@ function NearbyHouses() {
           "Nearby Houses Error:",
           error
         );
+
+      } finally {
+
+        setLoading(false);
 
       }
 
@@ -40,44 +51,52 @@ function NearbyHouses() {
       <h2>📍 Nearby Houses</h2>
 
       {
-        houses.length === 0 ? (
-
+        loading ? (
+          <p>Loading houses...</p>
+        ) : houses.length === 0 ? (
           <p>No nearby houses found</p>
-
         ) : (
 
-          houses.map((house, index) => (
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "20px"
+            }}
+          >
 
-            <div
-              key={house._id || index}
-              className="nearby-card"
-            >
+            {houses.map((house, index) => (
 
-              <h3>
-                {house.title}
-              </h3>
+              <div
+                key={house._id || index}
+                className="nearby-card"
+              >
 
-              <p>
-                📍 {house.location}
-              </p>
+                <h3>
+                  {house.title}
+                </h3>
 
-              <p>
-                💰 ₹{house.price}
-              </p>
+                <p>
+                  📍 {house.location}
+                </p>
 
-              {
-                house.distance && (
+                <p>
+                  💰 ₹{house.price}
+                </p>
+
+                {house.distance && (
 
                   <p>
-                    📏 {house.distance} km away
+                    📏 {house.distance} away
                   </p>
 
-                )
-              }
+                )}
 
-            </div>
+              </div>
 
-          ))
+            ))}
+
+          </div>
 
         )
       }

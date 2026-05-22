@@ -1,19 +1,59 @@
+# backend/services/house_scraper.py
+
+import requests
+from bs4 import BeautifulSoup
+
 def get_tumkur_houses():
 
-    return [
+    url = "https://www.nobroker.in/property/rent/tumkur"
 
-        {
-            "title":"2BHK Flat",
-            "location":"Tumakuru",
-            "price":"15000",
-            "distance":"1.2 km"
-        },
+    headers = {
+        "User-Agent":
+        "Mozilla/5.0"
+    }
 
-        {
-            "title":"1BHK House",
-            "location":"SIT Tumakuru",
-            "price":"9000",
-            "distance":"2.4 km"
-        }
+    try:
 
-    ]
+        response = requests.get(
+            url,
+            headers=headers
+        )
+
+        soup = BeautifulSoup(
+            response.text,
+            "html.parser"
+        )
+
+        houses=[]
+
+        cards=soup.find_all(
+            "div",
+            class_="card"
+        )
+
+        for card in cards[:10]:
+
+            houses.append({
+
+                "title":
+                card.get_text(strip=True),
+
+                "location":
+                "Tumakuru",
+
+                "price":
+                "Dynamic",
+
+                "distance":
+                "Nearby"
+
+            })
+
+        return houses
+
+    except Exception as e:
+
+        print(e)
+
+        return []
+    
