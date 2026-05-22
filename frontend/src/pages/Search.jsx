@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getHouses } from "../services/houseService";
 import { getFurniture } from "../services/furnitureService";
 import "../styles/Search.css";
+import NearbyHouses from "../components/NearbyHouses"
 
 /*  Distance formula */
 const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -148,7 +149,7 @@ function Search() {
   return (
     <div className="search-container">
       <h1> Find Your Dream House</h1>
-
+      <NearbyHouses />
       {/* 🔍 SEARCH BAR */}
       <div className="search-bar">
         <input name="location" placeholder="📍 Location" onChange={handleChange} />
