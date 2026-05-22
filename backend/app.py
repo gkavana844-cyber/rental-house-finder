@@ -9,6 +9,7 @@ from routes.house_routes import house_bp
 from routes.auth_routes import auth_bp
 from routes.furniture_routes import furniture_bp
 from routes.nearby_routes import nearby_bp
+from routes.external_routes import external_bp   # ✅ NEW
 
 
 app = Flask(__name__)
@@ -50,7 +51,6 @@ except Exception as e:
         e
     )
 
-
 # Secret key
 app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
@@ -67,6 +67,7 @@ def home():
 
 
 # Register Blueprints
+
 app.register_blueprint(
     house_bp,
     url_prefix="/api/houses"
@@ -82,14 +83,20 @@ app.register_blueprint(
     url_prefix="/api/furniture"
 )
 
-# New Nearby Houses Feature
 app.register_blueprint(
     nearby_bp,
     url_prefix="/api/nearby"
 )
 
+# ✅ NEW EXTERNAL HOUSES ROUTE
+app.register_blueprint(
+    external_bp,
+    url_prefix="/api/external"
+)
+
 
 if __name__ == "__main__":
+
     port = int(
         os.environ.get(
             "PORT",
