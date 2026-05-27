@@ -1,0 +1,210 @@
+/* 🌌 Animated Background */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 🌈 Background animation */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🧾 Container */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 💎 Glass Card */
+.auth-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+
+  padding: 40px;
+  border-radius: 20px;
+  width: 360px;
+
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+
+  position: relative;
+  overflow: hidden;
+
+  animation: fadeSlide 0.8s ease, floatCard 5s ease-in-out infinite;
+}
+
+/* ✨ glowing border */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(120deg, #00c6ff, #0072ff, #ff7e5f);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 🎬 Entry animation */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 🌟 Floating effect */
+@keyframes floatCard {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ✨ Heading */
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #fff;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+/* 🧾 Inputs */
+.auth-card input {
+  width: 100%;
+  padding: 13px;
+  margin: 10px 0;
+
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.3);
+
+  background: rgba(255,255,255,0.2);
+  color: white;
+
+  transition: 0.3s;
+  font-size: 14px;
+}
+
+/* Placeholder */
+.auth-card input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+/* 🔥 Input focus */
+.auth-card input:focus {
+  border-color: #00c6ff;
+  box-shadow: 0 0 10px rgba(0,198,255,0.8);
+  outline: none;
+  transform: scale(1.03);
+}
+
+/* 🚀 Button */
+.auth-card button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  transition: 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✨ Button shine */
+.auth-card button::after {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+  top: -50%;
+  left: -50%;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+
+/* Shine animation */
+.auth-card button:hover::after {
+  opacity: 1;
+  animation: shine 1s linear;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* Hover */
+.auth-card button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,198,255,0.6);
+}
+
+/* Click */
+.auth-card button:active {
+  transform: scale(0.95);
+}
+
+/* 🔗 Links */
+.auth-link {
+  text-align: center;
+  margin-top: 18px;
+  color: white;
+}
+
+.auth-link span {
+  color: #00c6ff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+/* Link hover */
+.auth-link span:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
+/* 📱 Responsive */
+@media (max-width: 500px) {
+  .auth-card {
+    width: 90%;
+    padding: 25px;
+  }
+
+  .auth-card h2 {
+    font-size: 20px;
+  }
+}

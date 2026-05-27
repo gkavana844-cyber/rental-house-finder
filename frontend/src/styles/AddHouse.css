@@ -1,0 +1,310 @@
+/* 🌌 BACKGROUND */
+.add-container {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 60px 16px;
+  overflow-y: auto;
+
+  background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+}
+
+/* 🌈 Gradient animation */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 💎 GLASS CARD */
+.add-card {
+  width: 500px;
+  max-width: 100%;
+
+  padding: 35px;
+  margin: 20px auto;
+
+  border-radius: 20px;
+
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+
+  position: relative;
+  overflow: hidden;
+
+  animation: fadeSlide 0.8s ease;
+}
+
+/* ✨ GLOW BORDER */
+.add-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1.5px;
+
+  background: linear-gradient(120deg, #00c6ff, #0072ff, #ff7e5f);
+  background-size: 300% 300%;
+  animation: borderGlow 6s linear infinite;
+
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none;
+}
+
+@keyframes borderGlow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* 🎬 ENTRY */
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 🏡 TITLE */
+.add-card h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+/* ✨ INPUT GROUP */
+.input-group {
+  position: relative;
+  margin: 18px 0;
+}
+
+/* INPUT STYLE */
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 14px 12px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+
+  background: rgba(255,255,255,0.12);
+  color: white;
+
+  font-size: 14px;
+  outline: none;
+
+  transition: all 0.3s ease;
+}
+
+/* FIX SELECT TEXT COLOR */
+.input-group select option {
+  color: black;
+}
+
+/* LABEL */
+.input-group label {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+/* FLOAT EFFECT */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label,
+.input-group select:focus + label,
+.input-group select:not([value=""]) + label {
+  top: -8px;
+  font-size: 11px;
+  color: #00c6ff;
+  background: #0f2027;
+  padding: 0 6px;
+  border-radius: 4px;
+}
+
+/* FOCUS */
+.input-group input:focus,
+.input-group select:focus {
+  border-color: #00c6ff;
+  box-shadow: 0 0 12px rgba(0,198,255,0.6);
+}
+
+/* 🗺️ MAP */
+.map-container {
+  width: 100%;
+  height: 260px;
+  margin: 20px 0;
+
+  border-radius: 15px;
+  overflow: hidden;
+
+  border: 2px solid rgba(255,255,255,0.2);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.6);
+
+  transition: 0.3s;
+}
+
+.map-container:hover {
+  transform: scale(1.02);
+}
+
+/* LEAFLET FIX */
+.map-container .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* 📂 FILE INPUT */
+.file-upload input,
+input[type="file"] {
+  width: 100%;
+  padding: 12px;
+
+  border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,0.4);
+
+  background: rgba(255,255,255,0.12);
+  color: white;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.file-upload input:hover,
+input[type="file"]:hover {
+  border-color: #00c6ff;
+}
+
+/* 🖼️ PREVIEW */
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.preview-box {
+  position: relative;
+}
+
+/* IMAGE */
+.preview-box img {
+  width: 100%;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.preview-box img:hover {
+  transform: scale(1.05);
+}
+
+/* DELETE BUTTON */
+.preview-box span {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  background: #ff4d4d;
+  color: white;
+
+  font-size: 12px;
+  padding: 4px 6px;
+
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.preview-box span:hover {
+  background: #ff0000;
+}
+
+/* 🚀 BUTTON */
+.add-card button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 20px;
+
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+
+  border: none;
+  border-radius: 12px;
+
+  font-weight: bold;
+  font-size: 15px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* HOVER */
+.add-card button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,198,255,0.6);
+}
+
+/* CLICK */
+.add-card button:active {
+  transform: scale(0.95);
+}
+
+/* 📱 MOBILE */
+@media (max-width: 500px) {
+  .add-container {
+    padding: 25px 10px;
+  }
+
+  .add-card {
+    padding: 20px;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* 🔥 Upload Text Inside Box */
+.file-upload {
+  position: relative;
+}
+
+.upload-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+/* Hide default ugly text */
+input[type="file"]::file-selector-button {
+  display: none;
+}

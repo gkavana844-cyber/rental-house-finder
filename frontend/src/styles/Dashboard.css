@@ -1,0 +1,174 @@
+/* 🌌 Animated Gradient Background */
+.dashboard-container {
+  height: 100vh;
+  background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
+  background-size: 400% 400%;
+  animation: gradientMove 10s ease infinite;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* 🔥 Background animation */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🌟 Title Animation */
+.title {
+  font-size: 42px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  animation: fadeDown 1s ease;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 16px;
+  opacity: 0.8;
+  margin-bottom: 40px;
+  animation: fadeUp 1.2s ease;
+}
+
+/* 🎬 Fade animations */
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 🧱 Card container */
+.card-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* 💎 Glassmorphism Card */
+.card {
+  width: 320px;
+  height: 200px;
+  border-radius: 20px;
+  padding: 25px;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  transition: all 0.4s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🔥 Neon Glow Effect */
+.card::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.3),
+    transparent
+  );
+  transform: rotate(45deg);
+  top: -50%;
+  left: -50%;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+/* Hover Shine Effect */
+.card:hover::before {
+  opacity: 1;
+  animation: shine 1s linear;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* 🎨 Card Colors */
+.card.add {
+  border-left: 5px solid #00c6ff;
+}
+
+.card.search {
+  border-left: 5px solid #ff7e5f;
+}
+
+/* 🚀 Hover Effect */
+.card:hover {
+  transform: translateY(-15px) scale(1.06);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+/* ✨ Text */
+.card h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.card p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* 🔥 Floating animation */
+.card {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ✨ Button-like effect inside card */
+.card:active {
+  transform: scale(0.95);
+}
+
+/* 🌟 Responsive */
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+  }
+
+  .title {
+    font-size: 30px;
+  }
+}
