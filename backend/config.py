@@ -1,16 +1,21 @@
-<<<<<<< HEAD
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
 load_dotenv()
 
 class Config:
-=======
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-class Config:
->>>>>>> 3e428f534d42f51947e19a872534a44a62a76dd8
     MONGO_URI = os.getenv("MONGO_URI")
+
+    SECRET_KEY = os.getenv(
+        "SECRET_KEY"
+    )
+
+    CLOUD_NAME = os.getenv("CLOUD_NAME")
+
+    CLOUD_API_KEY = os.getenv(
+        "CLOUD_API_KEY"
+    )
+
+    CLOUD_API_SECRET = os.getenv(
+        "CLOUD_API_SECRET"
+    )
