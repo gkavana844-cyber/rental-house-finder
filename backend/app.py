@@ -10,8 +10,6 @@ import os
 from routes.house_routes import house_bp
 from routes.auth_routes import auth_bp
 from routes.furniture_routes import furniture_bp
-from routes.nearby_routes import nearby_bp
-from routes.external_routes import external_bp
 
 # =========================
 # 🚀 APP INIT
@@ -53,8 +51,7 @@ except Exception as e:
 # 🔐 SECRET KEY
 # =========================
 app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY",
-    "secret123"
+    "SECRET_KEY"
 )
 
 # =========================
@@ -71,34 +68,22 @@ def home():
 # 🔗 REGISTER BLUEPRINTS
 # =========================
 
-# Houses
+# Houses API
 app.register_blueprint(
     house_bp,
     url_prefix="/api/houses"
 )
 
-# Authentication
+# Authentication API
 app.register_blueprint(
     auth_bp,
     url_prefix="/api/auth"
 )
 
-# Furniture
+# Furniture API
 app.register_blueprint(
     furniture_bp,
     url_prefix="/api/furniture"
-)
-
-# Nearby Houses
-app.register_blueprint(
-    nearby_bp,
-    url_prefix="/api/nearby"
-)
-
-# External Houses API
-app.register_blueprint(
-    external_bp,
-    url_prefix="/api/external"
 )
 
 # =========================
