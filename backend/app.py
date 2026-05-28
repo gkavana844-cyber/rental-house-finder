@@ -10,7 +10,6 @@ import os
 from routes.house_routes import house_bp
 from routes.auth_routes import auth_bp
 from routes.furniture_routes import furniture_bp
-from routes.activityRoutes import activity_routes
 
 # =========================
 # 🚀 APP INIT
@@ -59,7 +58,7 @@ try:
         mongo_uri
     )
 
-    # ✅ PyMongo Connection
+    # ✅ MongoDB Connection
     client = MongoClient(
         mongo_uri
     )
@@ -125,7 +124,7 @@ def dashboard_stats():
             app.db.searches.count_documents({})
         )
 
-        # 🔥 TOP LOCATION
+        # ✅ TOP LOCATION
         pipeline = [
 
             {
@@ -218,12 +217,6 @@ app.register_blueprint(
 app.register_blueprint(
     furniture_bp,
     url_prefix="/api/furniture"
-)
-
-# 📊 Activity API
-app.register_blueprint(
-    activity_routes,
-    url_prefix="/api/activities"
 )
 
 # =========================
