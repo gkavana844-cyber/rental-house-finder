@@ -1,7 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
 from config import Config
-from mongoengine import connect
 from pymongo import MongoClient
 import os
 
@@ -17,50 +16,79 @@ from routes.activityRoutes import activity_routes
 # 🚀 APP INIT
 # =========================
 app = Flask(__name__)
-app.config.from_object(Config)
+
+app.config.from_object(
+    Config
+)
 
 # =========================
 # 🌐 CORS
 # =========================
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": "*"
+        }
+    }
+)
 
 # =========================
 # 🧠 MONGODB CONNECTION
 # =========================
 try:
+
     mongo_uri = (
-        os.environ.get("MONGO_URI")
-        or app.config.get("MONGO_URI")
+        os.environ.get(
+            "MONGO_URI"
+        )
+        or
+        app.config.get(
+            "MONGO_URI"
+        )
     )
 
     if not mongo_uri:
-        raise Exception("MONGO_URI not found")
 
-    print("MONGO_URI:", mongo_uri)
+        raise Exception(
+            "MONGO_URI not found"
+        )
 
-    # ✅ PyMongo connection (for existing code)
-    client = MongoClient(mongo_uri)
-    db = client["rental_db"]
-    app.db = db
-
-    # ✅ MongoEngine connection (for Activity model)
-    connect(
-        'rental_db',
-        host=mongo_uri,
-        alias='default'
+    print(
+        "MONGO_URI:",
+        mongo_uri
     )
 
-    print("✅ MongoDB Connected")
-    print("✅ MongoEngine Connected")
+    # ✅ PyMongo Connection
+    client = MongoClient(
+        mongo_uri
+    )
+
+    db = client[
+        "rental_db"
+    ]
+
+    app.db = db
+
+    print(
+        "✅ MongoDB Connected"
+    )
 
 except Exception as e:
-    print("❌ MongoDB Connection Error:", e)
+
+    print(
+        "❌ MongoDB Connection Error:",
+        e
+    )
 
 # =========================
 # 🔐 SECRET KEY
 # =========================
-app.config["SECRET_KEY"] = os.environ.get(
+app.config[
     "SECRET_KEY"
+] = os.environ.get(
+    "SECRET_KEY",
+    "secret123"
 )
 
 # =========================
@@ -68,52 +96,131 @@ app.config["SECRET_KEY"] = os.environ.get(
 # =========================
 @app.route("/")
 def home():
+
     return {
-        "message": "Rental House Finder API Running 🚀"
+        "success": True,
+        "message":
+        "Rental House Finder API Running 🚀"
     }
 
 # =========================
-# 📊 ADMIN DASHBOARD STATS ROUTE
+# 📊 DASHBOARD STATS
 # =========================
-@app.route("/api/dashboard/stats")
+@app.route(
+    "/api/dashboard/stats"
+)
 def dashboard_stats():
-    """Get dashboard statistics"""
+
     try:
-        from services.activityService import ActivityService
-        stats = ActivityService.get_dashboard_stats()
+
+        total_users = (
+            app.db.users.count_documents({})
+        )
+
+        total_houses = (
+            app.db.houses.count_documents({})
+        )
+
+        total_searches = (
+            app.db.searches.count_documents({})
+        )
+
+        # 🔥 TOP LOCATION
+        pipeline = [
+
+            {
+                "$group": {
+
+                    "_id":
+                    "$location",
+
+                    "count": {
+                        "$sum": 1
+                    }
+                }
+            },
+
+            {
+                "$sort": {
+                    "count": -1
+                }
+            },
+
+            {
+                "$limit": 1
+            }
+        ]
+
+        result = list(
+            app.db.searches.aggregate(
+                pipeline
+            )
+        )
+
+        top_location = (
+
+            result[0]["_id"]
+
+            if result
+
+            else "No Data"
+        )
+
         return {
-            'success': True,
-            'data': stats
+
+            "success": True,
+
+            "data": {
+
+                "total_users":
+                total_users,
+
+                "total_houses":
+                total_houses,
+
+                "total_searches":
+                total_searches,
+
+                "top_location":
+                top_location
+            }
+
         }, 200
+
     except Exception as e:
+
         return {
-            'success': False,
-            'error': str(e)
+
+            "success": False,
+
+            "error":
+            str(e)
+
         }, 500
 
 # =========================
 # 🔗 REGISTER BLUEPRINTS
 # =========================
 
-# Houses API
+# 🏠 Houses API
 app.register_blueprint(
     house_bp,
     url_prefix="/api/houses"
 )
 
-# Authentication API
+# 🔐 Auth API
 app.register_blueprint(
     auth_bp,
     url_prefix="/api/auth"
 )
 
-# Furniture API
+# 🛋 Furniture API
 app.register_blueprint(
     furniture_bp,
     url_prefix="/api/furniture"
 )
 
-# ✅ Activity API (NEW)
+# 📊 Activity API
 app.register_blueprint(
     activity_routes,
     url_prefix="/api/activities"
