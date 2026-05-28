@@ -1,5 +1,5 @@
 const API_URL =
-"https://rental-house-finder-47uv.onrender.com/api";
+"https://rental-house-finder-backend.onrender.com/api";
 
 export const getNearbyHouses = async (
   lat,

@@ -6,10 +6,14 @@ import cloudinary
 import cloudinary.uploader
 import os
 
-# ✅ CREATE BLUEPRINT
+# =========================
+# ✅ BLUEPRINT
+# =========================
 house_bp = Blueprint("house", __name__)
 
-# 🔥 CLOUDINARY CONFIG
+# =========================
+# ☁️ CLOUDINARY CONFIG
+# =========================
 cloudinary.config(
     cloud_name=os.environ.get("CLOUD_NAME"),
     api_key=os.environ.get("CLOUD_API_KEY"),
@@ -18,9 +22,10 @@ cloudinary.config(
 )
 
 # =========================
-# 📞 CLEAN NUMBER
+# 📞 CLEAN PHONE NUMBER
 # =========================
 def clean_number(num):
+
     if not num:
         return None
 
@@ -33,106 +38,238 @@ def clean_number(num):
 
 
 # =========================
-# ✅ ADD HOUSE (FIXED)
+# ✅ ADD HOUSE
 # =========================
 @house_bp.route("/add", methods=["POST"])
 def add_house():
+
     db = current_app.db
 
     try:
+
+        # FORM DATA
         data = request.form
+
+        # FILES
         files = request.files.getlist("images")
 
-        print("🔥 FILES RECEIVED:", files)
+        print("🔥 FORM DATA:", data)
+        print("🔥 FILES:", files)
 
         title = data.get("title")
         location = data.get("location")
 
         if not title:
-            return jsonify({"error": "Title required"}), 400
+            return jsonify({
+                "success": False,
+                "error": "Title required"
+            }), 400
 
         if not location:
-            return jsonify({"error": "Location required"}), 400
+            return jsonify({
+                "success": False,
+                "error": "Location required"
+            }), 400
 
-        house_type = data.get("type", "rent")
+        # HOUSE TYPE
+        house_type = data.get(
+            "type",
+            "rent"
+        )
 
+        # PRICE
         price = data.get("price")
-        lease_duration = data.get("lease_duration")
 
+        # LEASE
+        lease_duration = data.get(
+            "lease_duration"
+        )
+
+        # RENT TYPE
         if house_type == "rent":
+
             if not price:
-                return jsonify({"error": "Monthly rent required"}), 400
+                return jsonify({
+                    "success": False,
+                    "error": "Price required"
+                }), 400
+
             price = int(price)
+
             lease_duration = None
 
+        # LEASE TYPE
         elif house_type == "lease":
+
             if not lease_duration:
-                return jsonify({"error": "Lease duration required"}), 400
-            lease_duration = int(lease_duration)
+                return jsonify({
+                    "success": False,
+                    "error":
+                    "Lease duration required"
+                }), 400
+
+            lease_duration = int(
+                lease_duration
+            )
+
             price = None
 
-        phone = clean_number(data.get("phone"))
-        whatsapp = clean_number(data.get("whatsapp"))
+        # PHONE
+        phone = clean_number(
+            data.get("phone")
+        )
+
+        whatsapp = clean_number(
+            data.get("whatsapp")
+        )
 
         if not phone or len(phone) != 10:
-            return jsonify({"error": "Invalid phone number"}), 400
+
+            return jsonify({
+                "success": False,
+                "error":
+                "Invalid phone number"
+            }), 400
 
         if whatsapp and len(whatsapp) != 10:
-            return jsonify({"error": "Invalid WhatsApp number"}), 400
 
-        amenities = data.get("amenities", "")
-        amenities = [a.strip() for a in amenities.split(",") if a.strip()]
+            return jsonify({
+                "success": False,
+                "error":
+                "Invalid WhatsApp number"
+            }), 400
 
-        # 🔥 CLOUDINARY IMAGE UPLOAD
+        # AMENITIES
+        amenities = data.get(
+            "amenities",
+            ""
+        )
+
+        amenities = [
+            a.strip()
+            for a in amenities.split(",")
+            if a.strip()
+        ]
+
+        # =========================
+        # ☁️ CLOUDINARY IMAGE UPLOAD
+        # =========================
         image_urls = []
 
         for file in files:
+
             if file and file.filename != "":
-                result = cloudinary.uploader.upload(file)
 
-                print("🔥 CLOUDINARY RESULT:", result)
+                try:
 
-                image_urls.append(result["secure_url"])  # ✅ FIXED
+                    result = cloudinary.uploader.upload(
+                        file
+                    )
 
-        latitude = float(data.get("latitude")) if data.get("latitude") else None
-        longitude = float(data.get("longitude")) if data.get("longitude") else None
+                    print(
+                        "☁️ CLOUDINARY:",
+                        result
+                    )
 
+                    image_urls.append(
+                        result["secure_url"]
+                    )
+
+                except Exception as upload_error:
+
+                    print(
+                        "❌ IMAGE ERROR:",
+                        upload_error
+                    )
+
+        # LOCATION COORDINATES
+        latitude = (
+            float(data.get("latitude"))
+            if data.get("latitude")
+            else None
+        )
+
+        longitude = (
+            float(data.get("longitude"))
+            if data.get("longitude")
+            else None
+        )
+
+        # HOUSE OBJECT
         house = {
+
             "title": title,
-            "location": location.strip(),
+
+            "location":
+            location.strip(),
+
             "type": house_type,
+
             "price": price,
-            "lease_duration": lease_duration,
-            "images": image_urls,  # ✅ NOW URL
+
+            "lease_duration":
+            lease_duration,
+
+            "images": image_urls,
+
             "amenities": amenities,
+
             "latitude": latitude,
+
             "longitude": longitude,
+
             "phone": phone,
+
             "whatsapp": whatsapp,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
+
+            "created_at":
+            datetime.utcnow(),
+
+            "updated_at":
+            datetime.utcnow()
         }
 
-        result = db.houses.insert_one(house)
+        # SAVE TO DB
+        result = db.houses.insert_one(
+            house
+        )
 
         return jsonify({
-            "message": "House added successfully ✅",
-            "id": str(result.inserted_id)
+
+            "success": True,
+
+            "message":
+            "House added successfully ✅",
+
+            "id":
+            str(result.inserted_id)
+
         }), 201
 
     except Exception as e:
-        print("❌ ERROR:", e)
-        return jsonify({"error": "Internal server error"}), 500
+
+        print("❌ ADD HOUSE ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 # =========================
-# ✅ GET HOUSES
+# ✅ GET ALL HOUSES
 # =========================
 @house_bp.route("/", methods=["GET"])
 def get_houses():
+
     db = current_app.db
 
-    houses = list(db.houses.find().sort("created_at", -1))
+    houses = list(
+        db.houses.find().sort(
+            "created_at",
+            -1
+        )
+    )
 
     for h in houses:
         h["_id"] = str(h["_id"])
@@ -148,15 +285,28 @@ def get_houses():
 # =========================
 @house_bp.route("/<id>", methods=["GET"])
 def get_house(id):
+
     db = current_app.db
 
     try:
-        house = db.houses.find_one({"_id": ObjectId(id)})
+
+        house = db.houses.find_one({
+            "_id": ObjectId(id)
+        })
+
     except:
-        return jsonify({"error": "Invalid ID"}), 400
+
+        return jsonify({
+            "success": False,
+            "error": "Invalid ID"
+        }), 400
 
     if not house:
-        return jsonify({"error": "House not found"}), 404
+
+        return jsonify({
+            "success": False,
+            "error": "House not found"
+        }), 404
 
     house["_id"] = str(house["_id"])
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "https://rental-house-finder-47uv.onrender.com/api/furniture";
+const API = "https://rental-house-finder-backend.onrender.com/api/furniture";
 
 // ADD
 export const addFurniture = async (data) => {

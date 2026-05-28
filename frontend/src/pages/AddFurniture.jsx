@@ -87,7 +87,7 @@ export default function AddFurniture() {
       }
 
       const res = await fetch(
-        "https://rental-house-finder-47uv.onrender.com/api/furniture/add",
+        "https://rental-house-finder-backend.onrender.com/api/furniture/add",
         {
           method: "POST",
           body: formData

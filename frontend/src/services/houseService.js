@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // 🔥 UPDATED (LIVE BACKEND)
-const API = "https://rental-house-finder-47uv.onrender.com/api/houses";
+const API = "https://rental-house-finder-backend.onrender.com/api/houses";
 
 // ✅ Get all houses
 export const getHouses = async () => {

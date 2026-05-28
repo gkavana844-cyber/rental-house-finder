@@ -2,6 +2,7 @@ Flask==3.1.1
 Flask-Cors==6.0.1
 gunicorn==23.0.0
 pymongo==4.13.2
+mongoengine==0.27.0
 cloudinary==1.44.1
 
 requests==2.34.2
@@ -14,6 +15,6 @@ soupsieve==2.8.3
 typing_extensions==4.15.0
 urllib3==2.7.0
 
-python-dotenv
-bcrypt
-PyJWT
+python-dotenv==1.0.0
+bcrypt==4.1.2
+PyJWT==2.8.1

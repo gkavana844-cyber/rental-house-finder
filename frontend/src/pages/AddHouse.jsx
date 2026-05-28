@@ -257,7 +257,7 @@ function AddHouse() {
 
     try {
       const res = await fetch(
-        "https://rental-house-finder-47uv.onrender.com/api/houses/add",
+        "https://rental-house-finder-backend.onrender.com/api/houses/add",
         {
           method: "POST",
           body: formData,
