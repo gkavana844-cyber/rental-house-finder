@@ -1,5 +1,6 @@
-<<<<<<< HEAD
-/* 🌌 Animated Gradient Background */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🌌 ANIMATED GRADIENT BACKGROUND
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .dashboard-container {
   height: 100vh;
   background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
@@ -13,63 +14,131 @@
   color: white;
   text-align: center;
   overflow: hidden;
+  position: relative;
 }
 
-/* 🔥 Background animation */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ✨ AMBIENT OVERLAY PULSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.dashboard-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 25% 35%, rgba(0, 198, 255, 0.09) 0%, transparent 55%),
+    radial-gradient(circle at 75% 65%, rgba(255, 126, 95, 0.08) 0%, transparent 55%);
+  animation: ambientPulse 8s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes ambientPulse {
+  0%   { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 1;   transform: scale(1.1); }
+}
+
+/* Keep all children above the overlay */
+.dashboard-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🔥 BACKGROUND ANIMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 @keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* 🌟 Title Animation */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🌟 TITLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .title {
   font-size: 42px;
   font-weight: bold;
   margin-bottom: 10px;
-  animation: fadeDown 1s ease;
+  animation: titleReveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Subtitle */
+@keyframes titleReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.94);
+    letter-spacing: 6px;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    letter-spacing: normal;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   💬 SUBTITLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .subtitle {
   font-size: 16px;
   opacity: 0.8;
   margin-bottom: 40px;
-  animation: fadeUp 1.2s ease;
+  animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
-/* 🎬 Fade animations */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🎬 SHARED KEYFRAMES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 @keyframes fadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* 🧱 Card container */
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(0.82) translateY(24px); }
+  65%  { transform: scale(1.04) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shine {
+  0%   { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) rotate(45deg); }
+}
+
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 10px 40px rgba(0, 198, 255, 0.2), 0 0 20px rgba(0, 198, 255, 0.1); }
+}
+
+@keyframes borderGlowOrange {
+  0%, 100% { box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 10px 40px rgba(255, 126, 95, 0.2), 0 0 20px rgba(255, 126, 95, 0.1); }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🧱 CARD CONTAINER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .card-container {
   display: flex;
   gap: 30px;
   flex-wrap: wrap;
   justify-content: center;
+  animation: fadeUp 0.7s ease 0.35s both;
 }
 
-/* 💎 Glassmorphism Card */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   💎 GLASSMORPHISM CARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .card {
   width: 320px;
   height: 200px;
@@ -79,19 +148,30 @@
 
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.3s ease, background 0.3s ease;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
   overflow: hidden;
+
+  /* pop-in entry + float idle */
+  animation:
+    popIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both,
+    float 4s ease-in-out 0.8s infinite;
 }
 
-/* 🔥 Neon Glow Effect */
+/* Stagger card entries */
+.card:nth-child(1) { animation-delay: 0.3s, 0.8s; }
+.card:nth-child(2) { animation-delay: 0.45s, 1s; }
+.card:nth-child(3) { animation-delay: 0.60s, 1.2s; }
+.card:nth-child(4) { animation-delay: 0.75s, 1.4s; }
+
+/* ━━ SHINE SWEEP ━━ */
 .card::before {
   content: "";
   position: absolute;
@@ -100,7 +180,7 @@
   background: linear-gradient(
     120deg,
     transparent,
-    rgba(255,255,255,0.3),
+    rgba(255, 255, 255, 0.3),
     transparent
   );
   transform: rotate(45deg);
@@ -110,60 +190,68 @@
   transition: 0.5s;
 }
 
-/* Hover Shine Effect */
 .card:hover::before {
   opacity: 1;
-  animation: shine 1s linear;
+  animation: shine 0.8s linear;
 }
 
-@keyframes shine {
-  0% { transform: translateX(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) rotate(45deg); }
-}
-
-/* 🎨 Card Colors */
+/* ━━ CARD ACCENT COLORS ━━ */
 .card.add {
   border-left: 5px solid #00c6ff;
+  animation:
+    popIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both,
+    float 4s ease-in-out 0.8s infinite,
+    borderGlow 4s ease-in-out 1.5s infinite;
 }
 
 .card.search {
   border-left: 5px solid #ff7e5f;
+  animation:
+    popIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both,
+    float 4s ease-in-out 1s infinite,
+    borderGlowOrange 4s ease-in-out 1.5s infinite;
 }
 
-/* 🚀 Hover Effect */
+/* ━━ HOVER STATE ━━ */
 .card:hover {
-  transform: translateY(-15px) scale(1.06);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  transform: translateY(-15px) scale(1.06) !important;
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+  /* pause float + glow on hover */
+  animation-play-state: paused;
 }
 
-/* ✨ Text */
+/* ━━ ACTIVE / CLICK ━━ */
+.card:active {
+  transform: scale(0.95) !important;
+  transition: transform 0.1s ease;
+}
+
+/* ━━ TEXT ━━ */
 .card h2 {
   margin-bottom: 10px;
   font-size: 22px;
+  transition: letter-spacing 0.3s ease;
+}
+
+.card:hover h2 {
+  letter-spacing: 0.5px;
 }
 
 .card p {
   font-size: 14px;
   opacity: 0.9;
+  transition: opacity 0.3s ease;
 }
 
-/* 🔥 Floating animation */
-.card {
-  animation: float 4s ease-in-out infinite;
+.card:hover p {
+  opacity: 1;
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-/* ✨ Button-like effect inside card */
-.card:active {
-  transform: scale(0.95);
-}
-
-/* 🌟 Responsive */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   📱 RESPONSIVE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 @media (max-width: 768px) {
   .card {
     width: 90%;
@@ -172,179 +260,4 @@
   .title {
     font-size: 30px;
   }
-=======
-/* 🌌 Animated Gradient Background */
-.dashboard-container {
-  height: 100vh;
-  background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
-  background-size: 400% 400%;
-  animation: gradientMove 10s ease infinite;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-align: center;
-  overflow: hidden;
-}
-
-/* 🔥 Background animation */
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* 🌟 Title Animation */
-.title {
-  font-size: 42px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  animation: fadeDown 1s ease;
-}
-
-/* Subtitle */
-.subtitle {
-  font-size: 16px;
-  opacity: 0.8;
-  margin-bottom: 40px;
-  animation: fadeUp 1.2s ease;
-}
-
-/* 🎬 Fade animations */
-@keyframes fadeDown {
-  from {
-    opacity: 0;
-    transform: translateY(-40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 🧱 Card container */
-.card-container {
-  display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-/* 💎 Glassmorphism Card */
-.card {
-  width: 320px;
-  height: 200px;
-  border-radius: 20px;
-  padding: 25px;
-  cursor: pointer;
-
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* 🔥 Neon Glow Effect */
-.card::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.3),
-    transparent
-  );
-  transform: rotate(45deg);
-  top: -50%;
-  left: -50%;
-  opacity: 0;
-  transition: 0.5s;
-}
-
-/* Hover Shine Effect */
-.card:hover::before {
-  opacity: 1;
-  animation: shine 1s linear;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%) rotate(45deg); }
-  100% { transform: translateX(100%) rotate(45deg); }
-}
-
-/* 🎨 Card Colors */
-.card.add {
-  border-left: 5px solid #00c6ff;
-}
-
-.card.search {
-  border-left: 5px solid #ff7e5f;
-}
-
-/* 🚀 Hover Effect */
-.card:hover {
-  transform: translateY(-15px) scale(1.06);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-}
-
-/* ✨ Text */
-.card h2 {
-  margin-bottom: 10px;
-  font-size: 22px;
-}
-
-.card p {
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* 🔥 Floating animation */
-.card {
-  animation: float 4s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-}
-
-/* ✨ Button-like effect inside card */
-.card:active {
-  transform: scale(0.95);
-}
-
-/* 🌟 Responsive */
-@media (max-width: 768px) {
-  .card {
-    width: 90%;
-  }
-
-  .title {
-    font-size: 30px;
-  }
->>>>>>> 3e428f534d42f51947e19a872534a44a62a76dd8
 }
