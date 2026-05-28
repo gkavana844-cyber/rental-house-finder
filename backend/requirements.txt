@@ -16,3 +16,4 @@ urllib3==2.7.0
 
 python-dotenv
 bcrypt
+PyJWT
