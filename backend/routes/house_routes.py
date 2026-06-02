@@ -5,6 +5,7 @@ import re
 import cloudinary
 import cloudinary.uploader
 import os
+from services.activityService import ActivityService
 
 # =========================
 # ✅ BLUEPRINT
@@ -233,6 +234,24 @@ def add_house():
         result = db.houses.insert_one(
             house
         )
+
+        # =========================
+        # ✅ LOG ACTIVITY
+        # =========================
+        try:
+            ActivityService.log_activity(
+                activity_type="house_added",
+                description=f"House added in {location}",
+                user_id=phone,
+                metadata={
+                    "house_id": str(result.inserted_id),
+                    "title": title,
+                    "location": location,
+                    "type": house_type
+                }
+            )
+        except Exception as log_error:
+            print("⚠️ Activity Log Error:", log_error)
 
         return jsonify({
 

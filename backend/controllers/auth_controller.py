@@ -4,6 +4,7 @@ import datetime
 import re
 import os
 from models.user_model import create_user, find_user
+from services.activityService import ActivityService
 
 # 🔐 SECRET from .env
 SECRET = os.getenv("SECRET_KEY")
@@ -78,7 +79,24 @@ def register_user(data):
 
     create_user(user)
 
-    return {"success": True, "message": "User registered successfully ✅"}
+    # ✅ Log Activity
+    try:
+        ActivityService.log_activity(
+            activity_type="user_registered",
+            description=f"New user registered: {name}",
+            user_id=email,
+            metadata={
+                "name": name,
+                "email": email
+            }
+        )
+    except Exception as log_error:
+        print("Activity Log Error:", log_error)
+
+    return {
+        "success": True,
+        "message": "User registered successfully ✅"
+    }
 
 
 # =========================
