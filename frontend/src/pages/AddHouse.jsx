@@ -41,17 +41,9 @@ const isInsideTumkur = (lat, lng) =>
 /* 📍 FORMAT PHONE */
 const formatIndianNumber = (value) => {
   let digits = value.replace(/\D/g, "");
-
-  if (digits.startsWith("91")) {
-    digits = digits.slice(2);
-  }
-
+  if (digits.startsWith("91")) digits = digits.slice(2);
   digits = digits.slice(0, 10);
-
-  if (digits.length > 5) {
-    digits = digits.slice(0, 5) + " " + digits.slice(5);
-  }
-
+  if (digits.length > 5) digits = digits.slice(0, 5) + " " + digits.slice(5);
   return "+91 " + digits;
 };
 
@@ -60,7 +52,6 @@ function LocationPicker({ setCoords, fetchAddress }) {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-
       if (isInsideTumkur(lat, lng)) {
         setCoords({ lat, lng });
         fetchAddress(lat, lng);
@@ -79,6 +70,16 @@ function ChangeMapView({ coords }) {
   return null;
 }
 
+/* 🪑 Furniture items list */
+const FURNITURE_ITEMS = [
+  { key: "Bed",             emoji: "🛏" },
+  { key: "Sofa",            emoji: "🛋" },
+  { key: "TV",              emoji: "📺" },
+  { key: "Fridge",          emoji: "❄️" },
+  { key: "Washing Machine", emoji: "🧺" },
+  { key: "AC",              emoji: "❄️" },
+];
+
 function AddHouse() {
   const navigate = useNavigate();
 
@@ -93,27 +94,21 @@ function AddHouse() {
     whatsapp: "",
   });
 
-  const [coords, setCoords] = useState({
-    lat: 13.3409,
-    lng: 77.101,
-  });
-
+  const [coords, setCoords] = useState({ lat: 13.3409, lng: 77.101 });
   const [suggestions, setSuggestions] = useState([]);
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
-  const [furniture, setFurniture] = useState([]);
+
+  // furniture is now an object: { "Bed": { price: "", whatsapp: "", image: null, preview: "" }, ... }
+  const [furnitureData, setFurnitureData] = useState({});
 
   const fetchAddress = async (lat, lng) => {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
     );
     const data = await res.json();
-
     if (data?.display_name?.toLowerCase().includes("tumkur")) {
-      setForm((prev) => ({
-        ...prev,
-        location: data.display_name,
-      }));
+      setForm((prev) => ({ ...prev, location: data.display_name }));
     }
   };
 
@@ -121,7 +116,6 @@ function AddHouse() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-
         if (isInsideTumkur(latitude, longitude)) {
           setCoords({ lat: latitude, lng: longitude });
           fetchAddress(latitude, longitude);
@@ -136,55 +130,41 @@ function AddHouse() {
 
   const fetchSuggestions = async (query) => {
     if (!query) return setSuggestions([]);
-
     const res = await fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${query}, Tumkur`
     );
-
     const data = await res.json();
-
     const filtered = data.filter((i) =>
       i.display_name.toLowerCase().includes("tumkur")
     );
-
     setSuggestions(filtered.slice(0, 5));
   };
 
   const handleChange = (e) => {
     let { name, value } = e.target;
-
     if (name === "phone" || name === "whatsapp") {
       value = formatIndianNumber(value);
     }
-
     setForm({ ...form, [name]: value });
-
-    if (name === "location") {
-      fetchSuggestions(value);
-    }
+    if (name === "location") fetchSuggestions(value);
   };
 
   const selectSuggestion = (item) => {
     const lat = parseFloat(item.lat);
     const lng = parseFloat(item.lon);
-
     setForm({ ...form, location: item.display_name });
     setCoords({ lat, lng });
     setSuggestions([]);
   };
 
-  /* 🔥 FIXED IMAGE HANDLING ✅ */
   const handleImageChange = (e) => {
     const files = e.target.files;
-
     const fileArray = [];
     const previewArray = [];
-
     for (let i = 0; i < files.length; i++) {
       fileArray.push(files[i]);
       previewArray.push(URL.createObjectURL(files[i]));
     }
-
     setImages(fileArray);
     setPreviews(previewArray);
   };
@@ -194,33 +174,55 @@ function AddHouse() {
     setPreviews(previews.filter((_, idx) => idx !== i));
   };
 
-  const handleFurniture = (item) => {
-    if (furniture.includes(item)) {
-      setFurniture(
-        furniture.filter(
-          f => f !== item
-        )
-      );
-    } else {
-      setFurniture([
-        ...furniture,
-        item
-      ]);
-    }
+  /* ─── Furniture Handlers ─── */
+  const handleFurnitureToggle = (key) => {
+    setFurnitureData((prev) => {
+      if (prev[key]) {
+        // uncheck — remove entry, revoke preview URL
+        if (prev[key].preview) URL.revokeObjectURL(prev[key].preview);
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      } else {
+        // check — add entry with empty fields
+        return { ...prev, [key]: { price: "", whatsapp: "", image: null, preview: "" } };
+      }
+    });
   };
 
-  /* 🔥 FIXED VALIDATION */
+  const handleFurnitureField = (key, field, value) => {
+    if (field === "whatsapp") value = formatIndianNumber(value);
+    setFurnitureData((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], [field]: value },
+    }));
+  };
+
+  const handleFurnitureImage = (key, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    setFurnitureData((prev) => ({
+      ...prev,
+      [key]: { ...prev[key], image: file, preview },
+    }));
+  };
+
+  const removeFurnitureImage = (key) => {
+    setFurnitureData((prev) => {
+      if (prev[key]?.preview) URL.revokeObjectURL(prev[key].preview);
+      return { ...prev, [key]: { ...prev[key], image: null, preview: "" } };
+    });
+  };
+
+  /* ─── Validation ─── */
   const validatePhone = (num) => {
     let digits = num.replace(/\D/g, "");
-
-    if (digits.startsWith("91")) {
-      digits = digits.slice(2);
-    }
-
+    if (digits.startsWith("91")) digits = digits.slice(2);
     return digits.length === 10;
   };
 
-  /* 🚀 UPDATED SUBMIT (CONFIRMED ✅) */
+  /* ─── Submit ─── */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -228,10 +230,17 @@ function AddHouse() {
       alert("Enter valid phone number");
       return;
     }
-
     if (form.whatsapp && !validatePhone(form.whatsapp)) {
       alert("Enter valid WhatsApp number");
       return;
+    }
+
+    // Validate furniture whatsapp if filled
+    for (const [key, val] of Object.entries(furnitureData)) {
+      if (val.whatsapp && !validatePhone(val.whatsapp)) {
+        alert(`Enter valid WhatsApp for ${key}`);
+        return;
+      }
     }
 
     const formData = new FormData();
@@ -244,27 +253,34 @@ function AddHouse() {
     formData.append("latitude", coords.lat);
     formData.append("longitude", coords.lng);
     formData.append("phone", form.phone.replace(/\D/g, "").slice(-10));
-    formData.append("whatsapp", form.whatsapp ? form.whatsapp.replace(/\D/g, "").slice(-10) : "");
-
     formData.append(
-      "furniture",
-      JSON.stringify(furniture)
+      "whatsapp",
+      form.whatsapp ? form.whatsapp.replace(/\D/g, "").slice(-10) : ""
     );
 
-    images.forEach((img) => {
-      formData.append("images", img);
+    // Build furniture metadata (without image file)
+    const furnitureMeta = Object.entries(furnitureData).map(([key, val]) => ({
+      name: key,
+      price: val.price,
+      whatsapp: val.whatsapp ? val.whatsapp.replace(/\D/g, "").slice(-10) : "",
+    }));
+    formData.append("furniture", JSON.stringify(furnitureMeta));
+
+    // Append furniture images with their item name as key
+    Object.entries(furnitureData).forEach(([key, val]) => {
+      if (val.image) {
+        formData.append(`furniture_image_${key}`, val.image);
+      }
     });
+
+    images.forEach((img) => formData.append("images", img));
 
     try {
       const res = await fetch(
         "https://rental-house-finder-backend.onrender.com/api/houses/add",
-        {
-          method: "POST",
-          body: formData,
-        }
+        { method: "POST", body: formData }
       );
 
-      // 🔥 FIX: handle non-JSON response
       const text = await res.text();
       console.log("RAW RESPONSE:", text);
 
@@ -303,7 +319,6 @@ function AddHouse() {
           <div className="input-group">
             <input name="location" value={form.location} placeholder=" " onChange={handleChange} />
             <label>Location</label>
-
             {suggestions.length > 0 && (
               <div className="dropdown-options">
                 {suggestions.map((s, i) => (
@@ -324,9 +339,7 @@ function AddHouse() {
               name="phone"
               value={form.phone}
               placeholder=" "
-              onFocus={() => {
-                if (!form.phone) setForm({ ...form, phone: "+91 " });
-              }}
+              onFocus={() => { if (!form.phone) setForm({ ...form, phone: "+91 " }); }}
               onChange={handleChange}
             />
             <label>Phone Number 📞</label>
@@ -337,9 +350,7 @@ function AddHouse() {
               name="whatsapp"
               value={form.whatsapp}
               placeholder=" "
-              onFocus={() => {
-                if (!form.whatsapp) setForm({ ...form, whatsapp: "+91 " });
-              }}
+              onFocus={() => { if (!form.whatsapp) setForm({ ...form, whatsapp: "+91 " }); }}
               onChange={handleChange}
             />
             <label>WhatsApp Number 💬</label>
@@ -355,13 +366,7 @@ function AddHouse() {
 
           {form.type === "rent" && (
             <div className="input-group">
-              <input
-                type="number"
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-                placeholder=" "
-              />
+              <input type="number" name="price" value={form.price} onChange={handleChange} placeholder=" " />
               <label>Monthly Rent ₹</label>
             </div>
           )}
@@ -369,23 +374,11 @@ function AddHouse() {
           {form.type === "lease" && (
             <>
               <div className="input-group">
-                <input
-                  type="number"
-                  name="lease_duration"
-                  value={form.lease_duration}
-                  onChange={handleChange}
-                  placeholder=" "
-                />
+                <input type="number" name="lease_duration" value={form.lease_duration} onChange={handleChange} placeholder=" " />
                 <label>Lease Duration</label>
               </div>
               <div className="input-group">
-                <input
-                  type="number"
-                  name="price"
-                  value={form.price}
-                  onChange={handleChange}
-                  placeholder=" "
-                />
+                <input type="number" name="price" value={form.price} onChange={handleChange} placeholder=" " />
                 <label>Lease Amount ₹</label>
               </div>
             </>
@@ -401,12 +394,7 @@ function AddHouse() {
           </div>
 
           <div className="input-group file-upload">
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageChange}
-            />
+            <input type="file" multiple accept="image/*" onChange={handleImageChange} />
             <span className="upload-text">📸 Upload Your Home Images</span>
           </div>
 
@@ -420,44 +408,88 @@ function AddHouse() {
           </div>
 
           <div className="input-group">
-            <input
-              name="amenities"
-              value={form.amenities}
-              onChange={handleChange}
-              placeholder=" "
-            />
+            <input name="amenities" value={form.amenities} onChange={handleChange} placeholder=" " />
             <label>Amenities</label>
           </div>
 
-          {/* 🪑 Optional Furniture */}
+          {/* 🪑 Furniture Section */}
           <div className="furniture-section">
             <h3>🪑 Add Furniture (Optional)</h3>
             <div className="furniture-options">
-              <label>
-                <input type="checkbox" onChange={() => handleFurniture("Bed")} />
-                🛏 Bed
-              </label>
-              <label>
-                <input type="checkbox" onChange={() => handleFurniture("Sofa")} />
-                🛋 Sofa
-              </label>
-              <label>
-                <input type="checkbox" onChange={() => handleFurniture("TV")} />
-                📺 TV
-              </label>
-              <label>
-                <input type="checkbox" onChange={() => handleFurniture("Fridge")} />
-                ❄️ Fridge
-              </label>
-              <label>
-                <input type="checkbox" onChange={() => handleFurniture("Washing Machine")} />
-                🧺 Washing Machine
-              </label>
-              <label>
-                <input type="checkbox" onChange={() => handleFurniture("AC")} />
-                ❄️ AC
-              </label>
+              {FURNITURE_ITEMS.map(({ key, emoji }) => (
+                <label key={key} className={furnitureData[key] ? "furniture-checked" : ""}>
+                  <input
+                    type="checkbox"
+                    checked={!!furnitureData[key]}
+                    onChange={() => handleFurnitureToggle(key)}
+                  />
+                  {emoji} {key}
+                </label>
+              ))}
             </div>
+
+            {/* Expanded detail rows for checked furniture */}
+            {FURNITURE_ITEMS.filter(({ key }) => furnitureData[key]).map(({ key, emoji }) => (
+              <div key={key} className="furniture-detail">
+                <div className="furniture-detail-title">
+                  {emoji} {key} — Details
+                </div>
+
+                <div className="furniture-detail-row">
+                  {/* Price */}
+                  <div className="input-group furniture-input">
+                    <input
+                      type="number"
+                      placeholder=" "
+                      value={furnitureData[key].price}
+                      onChange={(e) => handleFurnitureField(key, "price", e.target.value)}
+                    />
+                    <label>Price ₹</label>
+                  </div>
+
+                  {/* WhatsApp */}
+                  <div className="input-group furniture-input">
+                    <input
+                      type="text"
+                      placeholder=" "
+                      value={furnitureData[key].whatsapp}
+                      onFocus={() => {
+                        if (!furnitureData[key].whatsapp)
+                          handleFurnitureField(key, "whatsapp", "+91 ");
+                      }}
+                      onChange={(e) => handleFurnitureField(key, "whatsapp", e.target.value)}
+                    />
+                    <label>WhatsApp 💬</label>
+                  </div>
+                </div>
+
+                {/* Image upload */}
+                <div className="furniture-image-upload">
+                  {furnitureData[key].preview ? (
+                    <div className="furniture-preview">
+                      <img src={furnitureData[key].preview} alt={key} />
+                      <button
+                        type="button"
+                        className="furniture-remove-img"
+                        onClick={() => removeFurnitureImage(key)}
+                      >
+                        ❌ Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="furniture-upload-label">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFurnitureImage(key, e)}
+                        style={{ display: "none" }}
+                      />
+                      <span>📷 Upload {key} Image</span>
+                    </label>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <button type="submit">Add House</button>

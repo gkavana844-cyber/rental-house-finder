@@ -1,5 +1,32 @@
+/* ============================================================
+   ADD HOUSE — Refined Luxury Dark UI
+   Aesthetic: warm-toned obsidian glass, gold accents, editorial
+   ============================================================ */
 
-/* 🌌 BACKGROUND */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+
+/* ─── CSS Variables ─────────────────────────────────────────── */
+:root {
+  --gold:         #c8a96e;
+  --gold-bright:  #e8c98a;
+  --gold-dim:     rgba(200, 169, 110, 0.18);
+  --obsidian:     #0d0d0f;
+  --surface:      rgba(22, 20, 18, 0.85);
+  --surface-2:    rgba(255, 255, 255, 0.055);
+  --surface-3:    rgba(255, 255, 255, 0.09);
+  --border:       rgba(200, 169, 110, 0.2);
+  --border-hover: rgba(200, 169, 110, 0.55);
+  --text-primary: #f0ece4;
+  --text-muted:   rgba(240, 236, 228, 0.45);
+  --text-label:   rgba(200, 169, 110, 0.75);
+  --danger:       #e05c5c;
+  --radius-card:  24px;
+  --radius-input: 12px;
+  --radius-btn:   14px;
+  --transition:   0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Page Background ───────────────────────────────────────── */
 .add-container {
   min-height: 100vh;
   width: 100%;
@@ -8,304 +35,572 @@
   justify-content: center;
   align-items: flex-start;
 
-  padding: 60px 16px;
+  padding: 64px 20px 80px;
   overflow-y: auto;
 
-  background: linear-gradient(-45deg, #1e3c72, #2a5298, #0f2027, #203a43);
-  background-size: 400% 400%;
-  animation: gradientBG 12s ease infinite;
+  background-color: var(--obsidian);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(180, 130, 60, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(100, 70, 20, 0.1)  0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
-/* 🌈 Gradient animation */
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* 💎 GLASS CARD */
+/* ─── Card ──────────────────────────────────────────────────── */
 .add-card {
-  width: 500px;
+  width: 520px;
   max-width: 100%;
 
-  padding: 35px;
-  margin: 20px auto;
+  padding: 44px 40px 50px;
+  margin: 0 auto;
 
-  border-radius: 20px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
-
-  border: 1px solid rgba(255,255,255,0.15);
-
-  box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.6),
+    0 40px 80px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(200, 169, 110, 0.12);
 
   position: relative;
   overflow: hidden;
 
-  animation: fadeSlide 0.8s ease;
+  font-family: 'DM Sans', sans-serif;
+  animation: cardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ✨ GLOW BORDER */
+/* Subtle top-edge glow line */
 .add-card::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 1.5px;
-
-  background: linear-gradient(120deg, #00c6ff, #0072ff, #ff7e5f);
-  background-size: 300% 300%;
-  animation: borderGlow 6s linear infinite;
-
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.6;
   pointer-events: none;
 }
 
-@keyframes borderGlow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+/* Corner ornament */
+.add-card::after {
+  content: "";
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 48px; height: 48px;
+  border-top: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  opacity: 0.25;
+  border-radius: 0 6px 0 0;
+  pointer-events: none;
 }
 
-/* 🎬 ENTRY */
-@keyframes fadeSlide {
+@keyframes cardReveal {
   from {
     opacity: 0;
-    transform: translateY(40px) scale(0.95);
+    transform: translateY(32px) scale(0.97);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
-/* 🏡 TITLE */
+/* ─── Heading ───────────────────────────────────────────────── */
 .add-card h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
   text-align: center;
-  color: #fff;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
+  margin-bottom: 36px;
+  position: relative;
 }
 
-/* ✨ INPUT GROUP */
+.add-card h2::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* ─── Input Group ───────────────────────────────────────────── */
 .input-group {
   position: relative;
-  margin: 18px 0;
+  margin: 22px 0;
 }
 
-/* INPUT STYLE */
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 14px 12px;
+  padding: 15px 14px 9px;
 
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
 
-  background: rgba(255,255,255,0.12);
-  color: white;
+  background: var(--surface-2);
+  color: var(--text-primary);
 
+  font-family: 'DM Sans', sans-serif;
   font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+
   outline: none;
-
-  transition: all 0.3s ease;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  appearance: none;
 }
 
-/* FIX SELECT TEXT COLOR */
 .input-group select option {
-  color: black;
+  background: #1a1810;
+  color: var(--text-primary);
 }
 
-/* LABEL */
+/* Label */
 .input-group label {
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255,255,255,0.6);
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
   font-size: 13px;
-
+  font-weight: 300;
   pointer-events: none;
-  transition: 0.3s;
+  transition: all var(--transition);
+  transform-origin: left center;
 }
 
-/* FLOAT EFFECT */
+/* Float */
 .input-group input:focus + label,
 .input-group input:not(:placeholder-shown) + label,
 .input-group select:focus + label,
 .input-group select:not([value=""]) + label {
-  top: -8px;
-  font-size: 11px;
-  color: #00c6ff;
-  background: #0f2027;
-  padding: 0 6px;
-  border-radius: 4px;
+  top: 10px;
+  transform: translateY(0) scale(0.85);
+  color: var(--text-label);
+  font-weight: 500;
 }
 
-/* FOCUS */
+/* Focus state */
 .input-group input:focus,
 .input-group select:focus {
-  border-color: #00c6ff;
-  box-shadow: 0 0 12px rgba(0,198,255,0.6);
+  border-color: var(--gold);
+  background: rgba(200, 169, 110, 0.06);
+  box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.1), inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
-/* 🗺️ MAP */
+.input-group input:hover:not(:focus),
+.input-group select:hover:not(:focus) {
+  border-color: var(--border-hover);
+}
+
+/* ─── Dropdown Suggestions ──────────────────────────────────── */
+.dropdown-options {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0; right: 0;
+  z-index: 999;
+
+  background: #1c1a16;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.7);
+}
+
+.dropdown-options div {
+  padding: 11px 16px;
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background var(--transition);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-options div:last-child { border-bottom: none; }
+.dropdown-options div:hover { background: var(--gold-dim); color: var(--gold-bright); }
+
+/* ─── Buttons (base) ────────────────────────────────────────── */
+.add-card button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 18px;
+
+  border: none;
+  border-radius: var(--radius-btn);
+
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+/* Primary submit button — gold */
+.add-card button[type="submit"] {
+  background: linear-gradient(135deg, #b8913a 0%, #e8c98a 50%, #b8913a 100%);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  color: #1a1408;
+  box-shadow: 0 4px 20px rgba(200, 169, 110, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.add-card button[type="submit"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+
+.add-card button[type="submit"]:hover {
+  background-position: 100% 50%;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(200, 169, 110, 0.45);
+}
+
+.add-card button[type="submit"]:hover::before {
+  transform: translateX(100%);
+}
+
+.add-card button[type="submit"]:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 12px rgba(200, 169, 110, 0.2);
+}
+
+/* Secondary button — "Use My Current Location" */
+.add-card button[type="button"] {
+  background: var(--surface-3);
+  color: var(--gold);
+  border: 1px solid var(--border);
+  font-size: 13px;
+  padding: 12px;
+  margin-top: 4px;
+}
+
+.add-card button[type="button"]:hover {
+  background: var(--gold-dim);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
+/* ─── Map Container ─────────────────────────────────────────── */
 .map-container {
   width: 100%;
-  height: 260px;
-  margin: 20px 0;
+  height: 270px;
+  margin: 24px 0;
 
-  border-radius: 15px;
+  border-radius: 16px;
   overflow: hidden;
 
-  border: 2px solid rgba(255,255,255,0.2);
-  box-shadow: 0 10px 35px rgba(0,0,0,0.6);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(200,169,110,0.08);
 
-  transition: 0.3s;
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
 
 .map-container:hover {
-  transform: scale(1.02);
+  border-color: var(--border-hover);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,169,110,0.15);
 }
 
-/* LEAFLET FIX */
 .map-container .leaflet-container {
   width: 100%;
   height: 100%;
 }
 
-/* 📂 FILE INPUT */
-.file-upload input,
+/* ─── File Upload ────────────────────────────────────────────── */
+.file-upload {
+  position: relative;
+  margin: 22px 0;
+}
+
+.file-upload input[type="file"],
 input[type="file"] {
   width: 100%;
-  padding: 12px;
+  padding: 22px 14px;
 
-  border-radius: 12px;
-  border: 1px dashed rgba(255,255,255,0.4);
+  border-radius: var(--radius-input);
+  border: 1px dashed rgba(200, 169, 110, 0.3);
 
-  background: rgba(255,255,255,0.12);
-  color: white;
+  background: rgba(200, 169, 110, 0.04);
+  color: transparent;
 
   cursor: pointer;
-  transition: 0.3s;
+  transition: all var(--transition);
+  font-size: 0;
 }
 
-.file-upload input:hover,
+.file-upload input[type="file"]:hover,
 input[type="file"]:hover {
-  border-color: #00c6ff;
+  border-color: var(--gold);
+  background: var(--gold-dim);
 }
 
-/* 🖼️ PREVIEW */
+input[type="file"]::file-selector-button { display: none; }
+
+.upload-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-label);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ─── Image Preview Grid ─────────────────────────────────────── */
 .preview-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .preview-box {
   position: relative;
+  border-radius: 12px;
+  overflow: visible;
 }
 
-/* IMAGE */
 .preview-box img {
   width: 100%;
-  height: 85px;
+  height: 88px;
   object-fit: cover;
   border-radius: 12px;
-  transition: 0.3s;
+  border: 1px solid var(--border);
+  display: block;
+  transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .preview-box img:hover {
-  transform: scale(1.05);
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
 }
 
-/* DELETE BUTTON */
 .preview-box span {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: -7px; right: -7px;
 
-  background: #ff4d4d;
+  width: 22px; height: 22px;
+  display: flex; align-items: center; justify-content: center;
+
+  background: var(--danger);
   color: white;
-
-  font-size: 12px;
-  padding: 4px 6px;
+  font-size: 10px;
 
   border-radius: 50%;
   cursor: pointer;
-
-  transition: 0.2s;
+  border: 2px solid var(--obsidian);
+  transition: transform var(--transition), background var(--transition);
+  line-height: 1;
 }
 
 .preview-box span:hover {
-  background: #ff0000;
+  background: #ff3333;
+  transform: scale(1.15);
 }
 
-/* 🚀 BUTTON */
-.add-card button {
-  width: 100%;
-  padding: 15px;
-  margin-top: 20px;
+/* ─── Furniture Section ──────────────────────────────────────── */
+.furniture-section {
+  margin-top: 28px;
+  padding: 22px 20px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
 
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-
-  border: none;
-  border-radius: 12px;
-
-  font-weight: bold;
+.furniture-section h3 {
+  font-family: 'DM Serif Display', serif;
   font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+  letter-spacing: 0.02em;
+}
 
+.furniture-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.furniture-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  border: 1px solid rgba(255,255,255,0.06);
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 13px;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  user-select: none;
 }
 
-/* HOVER */
-.add-card button:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 30px rgba(0,198,255,0.6);
+.furniture-options label:hover {
+  background: var(--gold-dim);
+  border-color: var(--border);
+  color: var(--text-primary);
 }
 
-/* CLICK */
-.add-card button:active {
-  transform: scale(0.95);
+.furniture-options input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--gold);
+  flex-shrink: 0;
+  cursor: pointer;
 }
 
-/* 📱 MOBILE */
-@media (max-width: 500px) {
-  .add-container {
-    padding: 25px 10px;
-  }
+.furniture-options label:has(input:checked) {
+  background: rgba(200, 169, 110, 0.15);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+/* ─── Section Divider ───────────────────────────────────────── */
+.input-group + .input-group { margin-top: 14px; }
+
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(200,169,110,0.25); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(200,169,110,0.45); }
+
+/* ─── Furniture Detail Card ──────────────────────────────────── */
+.furniture-detail {
+  margin-top: 14px;
+  padding: 18px 16px 20px;
+  border-radius: 14px;
+  background: rgba(200, 169, 110, 0.05);
+  border: 1px solid rgba(200, 169, 110, 0.22);
+  animation: detailReveal 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes detailReveal {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.furniture-detail-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.furniture-detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.furniture-input {
+  margin: 0 !important;
+}
+
+/* ─── Furniture Image Upload ─────────────────────────────────── */
+.furniture-image-upload {
+  margin-top: 4px;
+}
+
+.furniture-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 1px dashed rgba(200, 169, 110, 0.35);
+  background: rgba(200, 169, 110, 0.04);
+  color: var(--text-label);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.furniture-upload-label:hover {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  color: var(--gold-bright);
+}
+
+.furniture-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.furniture-preview img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.furniture-remove-img {
+  width: auto !important;
+  padding: 7px 14px !important;
+  margin-top: 0 !important;
+  font-size: 12px !important;
+  background: rgba(224, 92, 92, 0.15) !important;
+  color: #e07070 !important;
+  border: 1px solid rgba(224, 92, 92, 0.3) !important;
+  box-shadow: none !important;
+  letter-spacing: 0.02em !important;
+}
+
+.furniture-remove-img:hover {
+  background: rgba(224, 92, 92, 0.28) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ─── Furniture checked state ────────────────────────────────── */
+.furniture-options label.furniture-checked {
+  background: rgba(200, 169, 110, 0.15);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+}
+
+/* ─── Mobile ─────────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .add-container { padding: 28px 12px 60px; }
 
   .add-card {
-    padding: 20px;
+    padding: 28px 22px 36px;
+    border-radius: 20px;
   }
 
-  .preview-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-/* 🔥 Upload Text Inside Box */
-.file-upload {
-  position: relative;
-}
+  .furniture-options { grid-template-columns: repeat(2, 1fr); }
+  .preview-grid { grid-template-columns: repeat(2, 1fr); }
+  .furniture-detail-row { grid-template-columns: 1fr; }
 
-.upload-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  color: rgba(255,255,255,0.7);
-  font-size: 14px;
-  pointer-events: none;
-}
-
-/* Hide default ugly text */
-input[type="file"]::file-selector-button {
-  display: none;
+  .add-card h2 { font-size: 22px; }
 }
