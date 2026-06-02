@@ -9,16 +9,6 @@ import os
 from services.activityService import ActivityService
 
 # =========================
-# 🪑 FURNITURE DATA
-# =========================
-try:
-    furniture = json.loads(
-        data.get("furniture", "[]")
-    )
-except:
-    furniture = []
-
-# =========================
 # ✅ BLUEPRINT
 # =========================
 house_bp = Blueprint("house", __name__)
@@ -61,6 +51,20 @@ def add_house():
 
         # FORM DATA
         data = request.form
+
+        # =========================
+        # 🪑 FURNITURE DATA
+        # =========================
+        print("🔥 FURNITURE RAW:", data.get("furniture"))
+
+        try:
+            furniture = json.loads(
+                data.get("furniture", "[]")
+            )
+            print("🔥 FURNITURE PARSED:", furniture)
+        except Exception as e:
+            print("🔥 FURNITURE ERROR:", e)
+            furniture = []
 
         # FILES
         files = request.files.getlist("images")
