@@ -264,6 +264,10 @@ function AddHouse() {
       price: val.price,
       whatsapp: val.whatsapp ? val.whatsapp.replace(/\D/g, "").slice(-10) : "",
     }));
+
+    console.log("🔥 furnitureData:", furnitureData);
+    console.log("🔥 furnitureMeta:", furnitureMeta);
+    
     formData.append("furniture", JSON.stringify(furnitureMeta));
 
     // Append furniture images with their item name as key

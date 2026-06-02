@@ -55,17 +55,39 @@ def add_house():
         # =========================
         # 🪑 FURNITURE DATA
         # =========================
+        # 🪑 FURNITURE DATA
         print("🔥 FURNITURE RAW:", data.get("furniture"))
 
         try:
             furniture = json.loads(
                 data.get("furniture", "[]")
             )
+
+            # 🔥 Upload furniture images
+            for item in furniture:
+
+                furniture_name = item.get("name")
+
+                furniture_file = request.files.get(
+                    f"furniture_image_{furniture_name}"
+                )
+
+                if furniture_file:
+
+                    upload_result = cloudinary.uploader.upload(
+                        furniture_file
+                    )
+
+                    item["image"] = upload_result.get(
+                        "secure_url"
+                    )
+
             print("🔥 FURNITURE PARSED:", furniture)
+
         except Exception as e:
+
             print("🔥 FURNITURE ERROR:", e)
             furniture = []
-
         # FILES
         files = request.files.getlist("images")
 
