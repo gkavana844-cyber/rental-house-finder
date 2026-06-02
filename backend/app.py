@@ -13,6 +13,9 @@ from routes.auth_routes import auth_bp
 from routes.furniture_routes import furniture_bp
 from routes.activityRoutes import activity_routes
 
+# 🔥 EXTERNAL ROUTES
+from routes.external_routes import external_bp
+
 # =========================
 # 🚀 APP INIT
 # =========================
@@ -173,9 +176,14 @@ app.register_blueprint(
     url_prefix="/api/furniture"
 )
 
-# ✅ Activity Routes
 app.register_blueprint(
     activity_routes
+)
+
+# 🔥 EXTERNAL API
+app.register_blueprint(
+    external_bp,
+    url_prefix="/api/external"
 )
 
 # =========================
