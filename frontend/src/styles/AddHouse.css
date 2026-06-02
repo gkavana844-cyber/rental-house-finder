@@ -24,13 +24,6 @@
   --radius-input:  12px;
   --radius-btn:    14px;
 
-  /* ── Unified easing tokens ─────────────────────────────────
-     Use these instead of ad-hoc cubic-beziers everywhere.
-     spring  → elastic, natural feel for interactive elements
-     smooth  → general UI transitions
-     reveal  → entrance animations (decelerate in)
-     exit    → leave / collapse (accelerate out)
-  ─────────────────────────────────────────────────────────── */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
@@ -41,12 +34,10 @@
   --dur-slow:   420ms;
   --dur-reveal: 680ms;
 
-  /* shorthand kept for legacy uses */
   --transition: var(--dur-mid) var(--ease-smooth);
 }
 
 /* ─── GPU acceleration helper ───────────────────────────────── */
-/* Applied to anything that animates transform / opacity */
 .add-card,
 .add-card button,
 .input-group input,
@@ -81,7 +72,6 @@
     radial-gradient(ellipse 60% 50% at 80% 90%, rgba(100, 70,  20, 0.10) 0%, transparent 55%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 
-  /* Smooth scroll for the page container */
   scroll-behavior: smooth;
 }
 
@@ -109,11 +99,9 @@
 
   font-family: 'DM Sans', sans-serif;
 
-  /* Smoother entrance: longer duration + spring easing */
   animation: cardReveal var(--dur-reveal) var(--ease-reveal) both;
 }
 
-/* Subtle top-edge glow line */
 .add-card::before {
   content: "";
   position: absolute;
@@ -124,7 +112,6 @@
   pointer-events: none;
 }
 
-/* Corner ornament */
 .add-card::after {
   content: "";
   position: absolute;
@@ -137,7 +124,6 @@
   pointer-events: none;
 }
 
-/* ── Card reveal — uses transform3d for GPU compositing ──────── */
 @keyframes cardReveal {
   0% {
     opacity: 0;
@@ -178,7 +164,6 @@
   transition: width var(--dur-slow) var(--ease-spring);
 }
 
-/* Subtle underline expand on card hover */
 .add-card:hover h2::after {
   width: 64px;
 }
@@ -189,10 +174,11 @@
   margin: 22px 0;
 }
 
+/* ── FIXED: increased top padding so typed text sits below the floated label ── */
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 15px 14px 9px;
+  padding: 22px 14px 8px;   /* ← key fix: top 22px creates room for the label */
 
   border-radius: var(--radius-input);
   border: 1px solid var(--border);
@@ -207,7 +193,6 @@
 
   outline: none;
 
-  /* Smooth all animated properties independently */
   transition:
     border-color  var(--dur-mid)  var(--ease-smooth),
     background    var(--dur-mid)  var(--ease-smooth),
@@ -215,7 +200,7 @@
     transform     var(--dur-fast) var(--ease-spring);
 
   appearance: none;
-  transform: translate3d(0, 0, 0); /* force own layer */
+  transform: translate3d(0, 0, 0);
 }
 
 .input-group select option {
@@ -223,7 +208,7 @@
   color: var(--text-primary);
 }
 
-/* Label */
+/* ── FIXED: label rests centered, floats to top strip on focus/fill ── */
 .input-group label {
   position: absolute;
   left: 14px;
@@ -236,7 +221,6 @@
   pointer-events: none;
   transform-origin: left center;
 
-  /* Smooth float transition */
   transition:
     top         var(--dur-mid)  var(--ease-spring),
     transform   var(--dur-mid)  var(--ease-spring),
@@ -244,13 +228,13 @@
     font-weight var(--dur-mid)  var(--ease-smooth);
 }
 
-/* Float */
+/* ── FIXED: label floats to top-left corner, text input area is now clear ── */
 .input-group input:focus + label,
 .input-group input:not(:placeholder-shown) + label,
 .input-group select:focus + label,
 .input-group select:not([value=""]) + label {
-  top: 10px;
-  transform: translate3d(0, 0, 0) scale(0.85);
+  top: 8px;                                         /* sits inside top padding zone */
+  transform: translate3d(0, 0, 0) scale(0.82);      /* smaller = clearly a label, not placeholder */
   color: var(--text-label);
   font-weight: 500;
 }
@@ -284,7 +268,6 @@
   overflow: hidden;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
 
-  /* Smooth open animation */
   animation: dropdownOpen var(--dur-mid) var(--ease-reveal) both;
   transform-origin: top center;
 }
@@ -321,7 +304,7 @@
 .dropdown-options div:hover {
   background: var(--gold-dim);
   color: var(--gold-bright);
-  padding-left: 22px; /* subtle slide-right on hover */
+  padding-left: 22px;
 }
 
 /* ─── Buttons (base) ────────────────────────────────────────── */
@@ -340,7 +323,7 @@
   text-transform: uppercase;
 
   cursor: pointer;
-  transform: translate3d(0, 0, 0); /* own compositing layer */
+  transform: translate3d(0, 0, 0);
 
   transition:
     background-position var(--dur-slow) var(--ease-smooth),
@@ -361,7 +344,6 @@
   overflow: hidden;
 }
 
-/* Shimmer sweep overlay */
 .add-card button[type="submit"]::before {
   content: "";
   position: absolute;
@@ -373,7 +355,6 @@
     transparent 70%
   );
   transform: translate3d(-110%, 0, 0);
-  /* GPU-accelerated shimmer — no layout reflow */
   transition: transform 0.55s var(--ease-smooth);
 }
 
@@ -517,7 +498,6 @@ input[type="file"]::file-selector-button { display: none; }
   overflow: visible;
 }
 
-/* Staggered entrance for preview images */
 .preview-box:nth-child(1) { animation: previewIn var(--dur-mid) var(--ease-reveal) 0ms   both; }
 .preview-box:nth-child(2) { animation: previewIn var(--dur-mid) var(--ease-reveal) 60ms  both; }
 .preview-box:nth-child(3) { animation: previewIn var(--dur-mid) var(--ease-reveal) 120ms both; }
@@ -696,7 +676,6 @@ input[type="file"]::file-selector-button { display: none; }
   background: rgba(200, 169, 110, 0.05);
   border: 1px solid rgba(200, 169, 110, 0.22);
 
-  /* Smooth spring entrance */
   animation: detailReveal var(--dur-slow) var(--ease-reveal) both;
   transform-origin: top center;
 }
@@ -825,7 +804,6 @@ input[type="file"]::file-selector-button { display: none; }
 }
 
 /* ─── Reduced-motion override ────────────────────────────────── */
-/* Respects OS accessibility setting — no janky motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -843,6 +821,13 @@ input[type="file"]::file-selector-button { display: none; }
   .add-card {
     padding: 28px 22px 36px;
     border-radius: 20px;
+  }
+
+  /* Slightly more top padding on mobile so label doesn't clip on smaller screens */
+  .input-group input,
+  .input-group select {
+    padding: 24px 14px 8px;
+    font-size: 16px; /* prevents iOS auto-zoom on focus */
   }
 
   .furniture-options      { grid-template-columns: repeat(2, 1fr); }

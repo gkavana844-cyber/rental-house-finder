@@ -100,8 +100,37 @@ function Search() {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
-  /* 🔥 SEARCH + SORT */
-  const handleSearch = () => {
+  /* 🔥 SEARCH + SORT (UPDATED) */
+  const handleSearch = async () => {
+    // 👉 LOG ACTIVITY START
+    try {
+      await fetch(
+        "https://rental-house-finder-backend.onrender.com/api/activities/log",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "user_searched",
+            description: `User searched in ${
+              filters.location || "All Locations"
+            }`,
+            user_id: "guest",
+            metadata: {
+              location: filters.location,
+              min_price: filters.min,
+              max_price: filters.max,
+              house_type: filters.type,
+            },
+          }),
+        }
+      );
+    } catch (err) {
+      console.log("Activity Log Error:", err);
+    }
+    // 👉 LOG ACTIVITY END
+
     let result = [...houses];
 
     if (filters.location) {
@@ -201,6 +230,30 @@ function Search() {
                 <h3>{h.title}</h3>
 
                 <p>📍 {h.location}</p>
+
+                {h.furniture && h.furniture.length > 0 && (
+                  <div className="house-furniture">
+                    <h4>🪑 Available Furniture</h4>
+
+                    {h.furniture.map((item, idx) => (
+                      <div key={idx}>
+                        <p>
+                          {item.name} - ₹{item.price}
+                        </p>
+
+                        {item.whatsapp && (
+                          <a
+                            href={`https://wa.me/91${item.whatsapp}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            💬 WhatsApp
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* 🔥 ADDED AMENITIES */}
                 {h.amenities && h.amenities.length > 0 && (

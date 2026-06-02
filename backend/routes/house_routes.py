@@ -1,11 +1,22 @@
 from flask import Blueprint, request, jsonify, current_app
 from bson import ObjectId
 from datetime import datetime
+import json
 import re
 import cloudinary
 import cloudinary.uploader
 import os
 from services.activityService import ActivityService
+
+# =========================
+# 🪑 FURNITURE DATA
+# =========================
+try:
+    furniture = json.loads(
+        data.get("furniture", "[]")
+    )
+except:
+    furniture = []
 
 # =========================
 # ✅ BLUEPRINT
@@ -222,6 +233,9 @@ def add_house():
             "phone": phone,
 
             "whatsapp": whatsapp,
+
+            # 🪑 SAVE FURNITURE
+            "furniture": furniture,
 
             "created_at":
             datetime.utcnow(),
