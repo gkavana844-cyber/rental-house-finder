@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { getHouses } from "../services/houseService";
 import { getFurniture } from "../services/furnitureService";
 import "../styles/Search.css";
-import NearbyHouses from "../components/NearbyHouses"
 
 /*  Distance formula */
 const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -178,7 +177,7 @@ function Search() {
   return (
     <div className="search-container">
       <h1> Find Your Dream House</h1>
-      <NearbyHouses />
+      
       {/* 🔍 SEARCH BAR */}
       <div className="search-bar">
         <input name="location" placeholder="📍 Location" onChange={handleChange} />
@@ -235,8 +234,18 @@ function Search() {
                   <div className="house-furniture">
                     <h4>🪑 Available Furniture</h4>
 
+                    {/* 🛋️ UPDATED FURNITURE MAPPING WITH IMAGES */}
                     {h.furniture.map((item, idx) => (
-                      <div key={idx}>
+                      <div key={idx} className="furniture-item">
+
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="furniture-preview"
+                          />
+                        )}
+
                         <p>
                           {item.name} - ₹{item.price}
                         </p>
@@ -308,13 +317,12 @@ function Search() {
       </div>
 
       {/* ✅ FURNITURE SECTION (UPDATED UI) */}
-      <h2 className="furniture-title"> Available Furniture</h2>
+      
 
       <div className="furniture-grid">
         {furniture.map((f, i) => (
           <div key={i} className="furniture-card">
 
-            {/* 🖼 IMAGE */}
             <img
               src={f.image || "https://via.placeholder.com/300x200"}
               alt={f.name}
@@ -327,7 +335,9 @@ function Search() {
               <p className="furniture-price">₹{f.price}</p>
 
               {f.contact && (
-                <p className="furniture-contact">📞 {formatPhone(f.contact)}</p>
+                <p className="furniture-contact">
+                  📞 {formatPhone(f.contact)}
+                </p>
               )}
 
               <div className="furniture-buttons">

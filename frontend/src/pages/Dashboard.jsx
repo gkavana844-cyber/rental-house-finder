@@ -52,7 +52,53 @@ function Dashboard() {
         {/* 👨‍💻 ADMIN */}
         <div
           className="card admin"
-          onClick={() => navigate("/admin")}
+          onClick={async () => {
+
+            const password = prompt(
+              "🔐 Only Admin can access this panel.\n\nPlease enter password:"
+            );
+
+            if (!password) return;
+
+            try {
+
+              const res = await fetch(
+                "https://rental-house-finder-backend.onrender.com/api/admin/login",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    password
+                  })
+                }
+              );
+
+              const data = await res.json();
+
+              if (data.success) {
+
+                localStorage.setItem(
+                  "adminToken",
+                  data.token
+                );
+
+                navigate("/admin");
+
+              } else {
+
+                alert("❌ Incorrect Password");
+
+              }
+
+            } catch (err) {
+
+              alert("❌ Server Error");
+
+            }
+
+          }}
         >
           <h2>
             👨‍💻 Admin Panel

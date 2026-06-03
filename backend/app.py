@@ -16,6 +16,9 @@ from routes.activityRoutes import activity_routes
 # 🔥 EXTERNAL ROUTES
 from routes.external_routes import external_bp
 
+# 🔐 ADMIN ROUTES
+from routes.admin_routes import admin_bp
+
 # =========================
 # 🚀 APP INIT
 # =========================
@@ -184,6 +187,12 @@ app.register_blueprint(
 app.register_blueprint(
     external_bp,
     url_prefix="/api/external"
+)
+
+# 🔐 ADMIN API
+app.register_blueprint(
+    admin_bp,
+    url_prefix="/api/admin"
 )
 
 # =========================
